@@ -1,0 +1,29 @@
+<.header>
+  Recording {@recording.id}
+  <:subtitle>This is a recording record from your database.</:subtitle>
+  <:actions>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Title">{@recording.title}</:item>
+  <:item title="Description">{@recording.description}</:item>
+  <!-- ten poster tak średnio działa chyba -->
+  <:item title="Video"><video src={@recording.link} poster={@recording.thumbnail_link} controls /></:item>
+  <:item title="Length seconds">{@recording.length_seconds}</:item>
+  <:item title="Date">{@recording.date}</:item>
+  <:item title="Views count">{@recording.views_count}</:item>
+</.list>
+
+<.back navigate={~p"/recordings"}>Back to recordings</.back>
+
+<%# <.modal :if={@live_action == :edit} id="recording-modal" show on_cancel={JS.patch(~p"/recordings/#{@recording}")}> %>
+<%#   <.live_component %>
+<%#     module={SludgeWeb.RecordingLive.FormComponent} %>
+<%#     id={@recording.id} %>
+<%#     title={@page_title} %>
+<%#     action={@live_action} %>
+<%#     recording={@recording} %>
+<%#     patch={~p"/recordings/#{@recording}"} %>
+<%#   /> %>
+<%# </.modal> %>

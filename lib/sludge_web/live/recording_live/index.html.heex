@@ -1,0 +1,36 @@
+<.table
+  id="recordings"
+  rows={@streams.recordings}
+  row_click={fn {_id, recording} -> JS.navigate(~p"/recordings/#{recording}") end}
+>
+  <:col :let={{_id, recording}} label="Title">{recording.title}</:col>
+  <:col :let={{_id, recording}} label="Description">{recording.description}</:col>
+  <:col :let={{_id, recording}} label="Thumbnail"><img src={recording.thumbnail_link} /></:col>
+  <:col :let={{_id, recording}} label="Length seconds">{recording.length_seconds}</:col>
+  <:col :let={{_id, recording}} label="Date">{recording.date}</:col>
+  <:col :let={{_id, recording}} label="Views count">{recording.views_count}</:col>
+  <:action :let={{_id, recording}}>
+    <div class="sr-only">
+      <.link navigate={~p"/recordings/#{recording}"}>Show</.link>
+    </div>
+  </:action>
+  <:action :let={{id, recording}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: recording.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<%# <.modal :if={@live_action in [:new, :edit]} id="recording-modal" show on_cancel={JS.patch(~p"/recordings")}> %>
+<%#   <.live_component %>
+<%#     module={SludgeWeb.RecordingLive.FormComponent} %>
+<%#     id={@recording.id || :new} %>
+<%#     title={@page_title} %>
+<%#     action={@live_action} %>
+<%#     recording={@recording} %>
+<%#     patch={~p"/recordings"} %>
+<%#   /> %>
+<%# </.modal> %>
