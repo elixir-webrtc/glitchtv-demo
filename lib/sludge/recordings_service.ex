@@ -26,7 +26,7 @@ defmodule Sludge.RecordingsService do
   def handle_call({:recording_complete, manifest, metadata}, _from, state) do
     # XXX SHOULD RECORDER EXPAND PATHS?
     # XXX MAYBE ADD OPTION PATH_PREFIX OR SOME SUCH?
-    result_manifest = ExWebRTC.Recorder.Converter.convert_manifest!(manifest,
+    result_manifest = ExWebRTC.Recorder.Converter.convert!(manifest,
       thumbnails_ctx: %{},
       output_path: "./priv/static/content/"
     )

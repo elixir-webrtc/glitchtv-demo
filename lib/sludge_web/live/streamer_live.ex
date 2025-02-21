@@ -85,10 +85,14 @@ defmodule SludgeWeb.StreamerLive do
     Sludge.StreamService.stream_started()
   end
 
-  defp on_disconnected("publisher", {manifest, nil}) do
+  defp on_disconnected("publisher", {:ok, manifest, nil}) do
     # XXX terrible name
     metadata = Sludge.StreamService.get_stream_metadata()
     Sludge.RecordingsService.recording_complete(manifest, metadata)
+    Sludge.StreamService.stream_ended()
+  end
+
+  defp on_disconnected("publisher", nil) do
     Sludge.StreamService.stream_ended()
   end
 

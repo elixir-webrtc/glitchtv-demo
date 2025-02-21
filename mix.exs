@@ -56,7 +56,8 @@ defmodule Sludge.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
 
-      {:ex_webrtc, github: "elixir-webrtc/ex_webrtc", branch: "sgfn/rtp-rec", override: true},
+      {:ex_webrtc, github: "elixir-webrtc/ex_webrtc", override: true},
+      {:ex_webrtc_recorder, github: "elixir-webrtc/ex_webrtc_recorder", override: true},
       {:live_ex_webrtc, github: "elixir-webrtc/live_ex_webrtc", branch: "sgfn/rtp-rec"},
 
       {:ex_aws, ">=0.0.0"},
