@@ -58,7 +58,7 @@ defmodule Sludge.MixProject do
 
       {:ex_webrtc, github: "elixir-webrtc/ex_webrtc", override: true},
       {:ex_webrtc_recorder, github: "elixir-webrtc/ex_webrtc_recorder", override: true},
-      {:live_ex_webrtc, github: "elixir-webrtc/live_ex_webrtc", branch: "sgfn/rtp-rec"},
+      {:live_ex_webrtc, github: "elixir-webrtc/live_ex_webrtc", ref: "82e2f5e"},
 
       {:ex_aws, ">=0.0.0"},
       {:ex_aws_s3, ">=0.0.0"},
