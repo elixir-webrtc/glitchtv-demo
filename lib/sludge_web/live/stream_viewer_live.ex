@@ -1,8 +1,10 @@
 defmodule SludgeWeb.StreamViewerLive do
+  require Logger
+
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
-  alias SludgeWeb.Chat
+  alias Sludge.Chat
 
   @impl true
   def render(assigns) do
@@ -22,27 +24,48 @@ defmodule SludgeWeb.StreamViewerLive do
       </div>
       <div
         id="chat"
-        class="flex flex-col overflow-hidden justify-end h-full text-wrap break-words w-96 p-4 border-brand/50 border-2 rounded-xl m-20"
+        class="flex flex-col overflow-hidden justify-end h-full text-wrap break-words w-96 p-4 border-brand/50 border-2 rounded-xl m-20 h-[600px]"
       >
-        <div id="chat-messages" class="overflow-y-scroll justify-end"></div>
-        <div class="flex flex-col pt-4 pb-4">
-          <div class="w-100% flex">
-            <div class="font-semibold">
-              nickname
+        <div id="chat-messages" phx-update="stream" class="overflow-y-scroll justify-end">
+          <div :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col pt-4 pb-4">
+            <div class="w-full flex">
+              <div class="font-semibold">
+                {msg.username}
+              </div>
+            </div>
+            <div class="message-body">
+              {msg.body}
             </div>
           </div>
-          <div class="message-body">
-            some very long message
-          </div>
         </div>
+
         <div class="flex flex-col justify-end py-2">
           <div class="w-full py-2">
-            <textarea
-              id="chat-input"
-              class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
-              maxlength="500"
-              disabled
-            ></textarea>
+            <form id="message-form" phx-change="validate-message" phx-submit="send-message">
+              <input
+                type="text"
+                id="msg-username"
+                class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
+                maxlength="500"
+                name="username"
+                value={@username}
+              />
+              <input
+                type="text"
+                id="msg-body"
+                class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
+                maxlength="500"
+                name="body"
+                value={@body}
+              />
+              <button
+                id="submit-button"
+                class="py-2 px-4 rounded-lg bg-brand/10 text-brand/80 font-semibold"
+                type="submit"
+              >
+                send
+              </button>
+            </form>
           </div>
           <div class="flex flex-row py-2 gap-2 justify-between">
             <input
@@ -66,8 +89,16 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Chat.subscribe()
+    end
+
     socket =
-      Player.attach(socket,
+      socket
+      |> stream(:messages, [])
+      |> assign(username: "guest", body: nil)
+      |> assign(test: "test", test2: "test2")
+      |> Player.attach(
         id: "player",
         publisher_id: "publisher",
         pubsub: Sludge.PubSub,
@@ -88,6 +119,25 @@ defmodule SludgeWeb.StreamViewerLive do
       # |> assign(:page_title, page_title(socket.assigns.live_action))
       # |> assign(:recording, Recordings.get_recording!(id))}
     }
+  end
+
+  @impl true
+  def handle_info({:new_msg, msg}, socket) do
+    {:noreply, stream(socket, :messages, [msg])}
+  end
+
+  @impl true
+  def handle_event("validate-message", %{"username" => username, "body" => body}, socket) do
+    # msgs = socket.assigns.streams.messages
+    # Logger.info("validate, #{msgs} msgs")
+    {:noreply, assign(socket, username: username, body: body)}
+  end
+
+  @impl true
+  def handle_event("send-message", %{"username" => username, "body" => _} = params, socket) do
+    Logger.info("send")
+    Chat.send_message(params)
+    {:noreply, assign(socket, username: username, body: nil)}
   end
 
   # defp page_title(:show), do: "Show Recording"
