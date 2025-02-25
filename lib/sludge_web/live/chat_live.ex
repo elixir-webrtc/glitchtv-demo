@@ -92,8 +92,7 @@ defmodule SludgeWeb.ChatLive do
     socket =
       socket
       |> stream(:messages, [])
-      |> assign(msg_body: nil)
-      |> assign(nickname: nil)
+      |> assign(msg_body: nil, nickname: nil, next_msg_id: 0)
 
     {:ok, socket}
   end
@@ -114,10 +113,12 @@ defmodule SludgeWeb.ChatLive do
 
   def handle_event("submit-form", %{"body" => body}, socket) do
     if body != "" do
-      send_message(%{"body" => body, "nickname" => socket.assigns.nickname})
+      id = socket.assigns.next_msg_id
+      send_message(body, socket.assigns.nickname, id)
+      {:noreply, assign(socket, msg_body: nil, next_msg_id: id + 1)}
+    else
+      {:noreply, socket}
     end
-
-    {:noreply, assign(socket, msg_body: nil)}
   end
 
   def handle_event("submit-form", %{"nickname" => nickname}, socket) do
@@ -134,8 +135,8 @@ defmodule SludgeWeb.ChatLive do
     Phoenix.PubSub.subscribe(Sludge.PubSub, "chatroom")
   end
 
-  defp send_message(%{"body" => body, "nickname" => nickname}) do
-    msg = %{nickname: nickname, body: body, id: System.unique_integer()}
+  defp send_message(body, nickname, id) do
+    msg = %{nickname: nickname, body: body, id: id}
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end
