@@ -25,11 +25,7 @@ defmodule SludgeWeb.ChatLive do
         phx-update="stream"
         class="overflow-y-scroll justify-end height-full"
       >
-        <div
-          :for={{id, msg} <- @streams.messages}
-          id="#{@id}:msg:#{id}"
-          class="flex flex-col pt-4 pb-4"
-        >
+        <div :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col pt-4 pb-4">
           <div class="w-full flex">
             <div class="font-semibold">
               {msg.nickname}
@@ -136,7 +132,8 @@ defmodule SludgeWeb.ChatLive do
   end
 
   defp send_message(body, nickname, id) do
-    msg = %{nickname: nickname, body: body, id: id}
+    msg = %{nickname: nickname, body: body, id: "#{nickname}:#{id}"}
+    Logger.info("msg: #{inspect(msg)}")
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end
