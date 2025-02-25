@@ -35,7 +35,7 @@ defmodule SludgeWeb.StreamViewerLive do
               Hello, title
             </span>
           </h1>
-          <div class="flex gap-4 text-[14px]">
+          <div class="flex gap-4 text-sm">
             <.dropping>
               Started:
               <span class="text-indigo-800 font-medium">
@@ -69,7 +69,7 @@ defmodule SludgeWeb.StreamViewerLive do
             <p class="text-indigo-800 text-[13px] text-medium">
               {comment.author}
             </p>
-            <p class="text-[16px]">
+            <p>
               {comment.text}
             </p>
           </li>

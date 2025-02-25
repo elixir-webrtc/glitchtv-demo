@@ -22,6 +22,7 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import { createPublisherHook, createPlayerHook } from "live_ex_webrtc";
+import ScrollDownHook from "./ScrollDownHook";
 
 let Hooks = {};
 

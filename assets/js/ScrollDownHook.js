@@ -1,5 +1,5 @@
 /**
- * @type {import("phoenix_live_view").ViewHook}
+ * @type {import("phoenix_live_view").ViewHookInterface}
  */
 export default {
   mounted() {
