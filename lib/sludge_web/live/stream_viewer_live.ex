@@ -27,14 +27,17 @@ defmodule SludgeWeb.StreamViewerLive do
       <div class="flex-grow">
         <Player.live_render socket={@socket} player={@player} />
         <div class="flex flex-col gap-4 mt-4">
-          <h1 class="text-2xl">
-            <span :if={@stream_metadata}>
-              {@stream_metadata.title}
-            </span>
-            <span :if={!@stream_metadata}>
-              Hello, title
-            </span>
-          </h1>
+          <div class="flex gap-3 items-center justify-start">
+            <.live_dropping />
+            <h1 class="text-2xl">
+              <span :if={@stream_metadata}>
+                {@stream_metadata.title}
+              </span>
+              <span :if={!@stream_metadata}>
+                Hello, title
+              </span>
+            </h1>
+          </div>
           <div class="flex gap-4 text-sm">
             <.dropping>
               Started:
@@ -91,6 +94,14 @@ defmodule SludgeWeb.StreamViewerLive do
         </form>
       </div>
     </div>
+    """
+  end
+
+  defp live_dropping(assigns) do
+    ~H"""
+    <p class="uppercase inline text-sm bg-[#FF0011] p-1 px-2 text-xs text-white rounded-md font-medium tracking-[8%]">
+      live
+    </p>
     """
   end
 
