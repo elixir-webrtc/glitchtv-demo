@@ -60,7 +60,11 @@ defmodule SludgeWeb.StreamViewerLive do
         </div>
       </div>
       <div class="flex flex-col justify-between border border-indigo-200 rounded-lg">
-        <ul class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6">
+        <ul
+          class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
+          phx-hook="ScrollDownHook"
+          id="message_box"
+        >
           <li :for={comment <- @comments} class="flex flex-col gap-1">
             <p class="text-indigo-800 text-[13px] text-medium">
               {comment.author}
