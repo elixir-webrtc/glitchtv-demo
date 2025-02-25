@@ -26,11 +26,11 @@ defmodule SludgeWeb.StreamViewerLive do
         id="chat"
         class="flex flex-col overflow-hidden justify-end h-full text-wrap break-words w-96 p-4 border-brand/50 border-2 rounded-xl m-20 h-[600px]"
       >
-        <div id="chat-messages" phx-update="stream" class="overflow-y-scroll justify-end">
+        <div id="chat-messages" phx-update="stream" class="overflow-y-scroll justify-end height-full">
           <div :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col pt-4 pb-4">
             <div class="w-full flex">
               <div class="font-semibold">
-                {msg.username}
+                {msg.nickname}
               </div>
             </div>
             <div class="message-body">
@@ -41,45 +41,40 @@ defmodule SludgeWeb.StreamViewerLive do
 
         <div class="flex flex-col justify-end py-2">
           <div class="w-full py-2">
-            <form id="message-form" phx-change="validate-message" phx-submit="send-message">
-              <input
-                type="text"
-                id="msg-username"
-                class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
-                maxlength="500"
-                name="username"
-                value={@username}
-              />
+            <form id="message-form" phx-change="validate-form" phx-submit="submit-form">
               <input
                 type="text"
                 id="msg-body"
                 class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
                 maxlength="500"
                 name="body"
-                value={@body}
+                value={@msg_body}
+                placeholder="type your message here..."
+                disabled={is_nil(@nickname)}
               />
-              <button
-                id="submit-button"
-                class="py-2 px-4 rounded-lg bg-brand/10 text-brand/80 font-semibold"
-                type="submit"
-              >
-                send
-              </button>
+              <div class="flex flex-row py-2 gap-2 justify-between">
+                <input
+                  id="chat-nickname"
+                  class="text-brand/80 font-semibold min-w-0 bg-brand/10 rounded-lg border pl-2 border-brand/50 focus:border-brand/100 focus:outline-none"
+                  placeholder="Your Nickname"
+                  maxlength="25"
+                  name="nickname"
+                  value={@nickname}
+                  disabled={not is_nil(@nickname)}
+                />
+                <button
+                  id="chat-button"
+                  type="submit"
+                  class="py-2 px-4 rounded-lg bg-brand/10 text-brand/80 font-semibold"
+                >
+                  <%= if is_nil(@nickname) do %>
+                    Join
+                  <% else %>
+                    Send
+                  <% end %>
+                </button>
+              </div>
             </form>
-          </div>
-          <div class="flex flex-row py-2 gap-2 justify-between">
-            <input
-              id="chat-nickname"
-              class="text-brand/80 font-semibold min-w-0 bg-brand/10 rounded-lg border pl-2 border-brand/50 focus:border-brand/100 focus:outline-none"
-              placeholder="Your Nickname"
-              maxlength="25"
-            />
-            <button
-              id="chat-button"
-              class="py-2 px-4 rounded-lg bg-brand/10 text-brand/80 font-semibold"
-            >
-              Join
-            </button>
           </div>
         </div>
       </div>
@@ -96,8 +91,8 @@ defmodule SludgeWeb.StreamViewerLive do
     socket =
       socket
       |> stream(:messages, [])
-      |> assign(username: "guest", body: nil)
-      |> assign(test: "test", test2: "test2")
+      |> assign(msg_body: nil)
+      |> assign(nickname: nil)
       |> Player.attach(
         id: "player",
         publisher_id: "publisher",
@@ -127,17 +122,30 @@ defmodule SludgeWeb.StreamViewerLive do
   end
 
   @impl true
-  def handle_event("validate-message", %{"username" => username, "body" => body}, socket) do
-    # msgs = socket.assigns.streams.messages
-    # Logger.info("validate, #{msgs} msgs")
-    {:noreply, assign(socket, username: username, body: body)}
+  def handle_event("validate-form", %{"nickname" => _nickname}, socket) do
+    {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("send-message", %{"username" => username, "body" => _} = params, socket) do
-    Logger.info("send")
-    Chat.send_message(params)
-    {:noreply, assign(socket, username: username, body: nil)}
+  def handle_event("validate-form", %{"body" => body}, socket) do
+    {:noreply, assign(socket, msg_body: body)}
+  end
+
+  def handle_event("submit-form", %{"body" => body}, socket) do
+    if body != "" do
+      Chat.send_message(%{"body" => body, "nickname" => socket.assigns.nickname})
+    end
+
+    {:noreply, assign(socket, msg_body: nil)}
+  end
+
+  def handle_event("submit-form", %{"nickname" => nickname}, socket) do
+    nickname =
+      case nickname do
+        "" -> nil
+        n -> n
+      end
+
+    {:noreply, assign(socket, nickname: nickname)}
   end
 
   # defp page_title(:show), do: "Show Recording"
