@@ -46,7 +46,9 @@ defmodule SludgeWeb.StreamViewerLive do
               </span>
             </.dropping>
             <.dropping>
-              435 viewers
+              <span class="text-indigo-800 font-medium">
+                435 viewers
+              </span>
             </.dropping>
             <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
               Share <SludgeWeb.CoreComponents.icon name="hero-share" class="fill-indigo-800" />
