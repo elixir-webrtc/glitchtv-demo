@@ -96,7 +96,7 @@ defmodule SludgeWeb.StreamViewerLive do
 
   defp dropping(assigns) do
     ~H"""
-    <div class="bg-violet-50 px-4 py-3 rounded-lg">
+    <div class="bg-violet-50 px-4 py-3 rounded-lg flex items-center">
       {render_slot(@inner_block)}
     </div>
     """
