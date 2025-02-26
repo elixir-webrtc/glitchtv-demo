@@ -34,32 +34,29 @@ defmodule SludgeWeb.StreamViewerLive do
                 {@stream_metadata.title}
               </span>
               <span :if={!@stream_metadata}>
-                Hello, title
+                The stream is offline
               </span>
             </h1>
           </div>
           <div class="flex gap-4 text-sm">
-            <.dropping>
-              Started:
+            <SludgeWeb.CoreComponents.dropping>
+              Started:&nbsp;
               <span class="text-indigo-800 font-medium">
                 {@start_difference} minutes ago
               </span>
-            </.dropping>
-            <.dropping>
+            </SludgeWeb.CoreComponents.dropping>
+            <SludgeWeb.CoreComponents.dropping>
               <span class="text-indigo-800 font-medium">
                 435 viewers
               </span>
-            </.dropping>
+            </SludgeWeb.CoreComponents.dropping>
             <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
               Share <SludgeWeb.CoreComponents.icon name="hero-share" class="fill-indigo-800" />
             </button>
           </div>
-          <p class="text-[16px]">
+          <p>
             <span :if={@stream_metadata}>
               {@stream_metadata.description}
-            </span>
-            <span :if={!@stream_metadata}>
-              Hello, description
             </span>
           </p>
         </div>
@@ -104,14 +101,6 @@ defmodule SludgeWeb.StreamViewerLive do
     <p class="uppercase inline text-sm bg-[#FF0011] p-1 px-2 text-xs text-white rounded-md font-medium tracking-[8%]">
       live
     </p>
-    """
-  end
-
-  defp dropping(assigns) do
-    ~H"""
-    <div class="bg-violet-50 px-4 py-3 rounded-lg flex items-center">
-      {render_slot(@inner_block)}
-    </div>
     """
   end
 
