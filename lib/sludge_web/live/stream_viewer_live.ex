@@ -28,7 +28,9 @@ defmodule SludgeWeb.StreamViewerLive do
         <Player.live_render socket={@socket} player={@player} />
         <div class="flex flex-col gap-4 mt-4">
           <div class="flex gap-3 items-center justify-start">
-            <.live_dropping />
+            <span :if={@stream_metadata}>
+              <.live_dropping />
+            </span>
             <h1 class="text-2xl">
               <span :if={@stream_metadata}>
                 {@stream_metadata.title}
@@ -38,7 +40,7 @@ defmodule SludgeWeb.StreamViewerLive do
               </span>
             </h1>
           </div>
-          <div class="flex gap-4 text-sm">
+          <div :if={@stream_metadata} class="flex gap-4 text-sm">
             <SludgeWeb.CoreComponents.dropping>
               Started:&nbsp;
               <span class="text-indigo-800 font-medium">
