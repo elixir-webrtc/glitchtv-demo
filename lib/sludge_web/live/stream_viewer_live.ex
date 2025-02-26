@@ -24,9 +24,9 @@ defmodule SludgeWeb.StreamViewerLive do
 
     ~H"""
     <div class="h-full flex gap-4 p-6">
-      <div class="flex-grow">
+      <div class="flex-grow flex flex-col gap-4">
         <Player.live_render socket={@socket} player={@player} />
-        <div class="flex flex-col gap-4 mt-4">
+        <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
             <span :if={@stream_metadata}>
               <.live_dropping />
@@ -51,7 +51,7 @@ defmodule SludgeWeb.StreamViewerLive do
               Share <.icon name="hero-share" class="fill-indigo-800" />
             </button>
           </div>
-          <p :if={@stream_metadata}>
+          <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
           </p>
         </div>
