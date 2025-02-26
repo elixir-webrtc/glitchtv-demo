@@ -676,4 +676,44 @@ defmodule SludgeWeb.CoreComponents do
     </div>
     """
   end
+
+  def arrow_right_icon(assigns) do
+    ~H"""
+    <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M3.01046 9H13.4584"
+        stroke="#4339AC"
+        stroke-width="1.5"
+        stroke-linecap="square"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10.625 5.63544L13.9896 9.00002L10.625 12.3646"
+        stroke="#4339AC"
+        stroke-width="1.5"
+        stroke-linecap="square"
+        stroke-linejoin="round"
+      />
+    </svg>
+    """
+  end
+
+  def eye_icon(assigns) do
+    ~H"""
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M0.974632 6.11501C0.939632 6.04001 0.939632 5.95501 0.974632 5.88001C1.90463 4.04501 3.80463 2.79001 5.99963 2.79001C8.19463 2.79001 10.0946 4.04501 11.0246 5.88501C11.0596 5.96001 11.0596 6.04501 11.0246 6.12001C10.0896 7.95001 8.19463 9.21001 5.99963 9.21001C3.80463 9.21001 1.90463 7.95001 0.974632 6.11501Z"
+        stroke="#696969"
+        stroke-width="1.08333"
+        stroke-miterlimit="10"
+      />
+      <path
+        d="M5.99975 7.55501C6.85856 7.55501 7.55475 6.85881 7.55475 6.00001C7.55475 5.1412 6.85856 4.44501 5.99975 4.44501C5.14095 4.44501 4.44475 5.1412 4.44475 6.00001C4.44475 6.85881 5.14095 7.55501 5.99975 7.55501Z"
+        stroke="#696969"
+        stroke-width="1.08333"
+        stroke-miterlimit="10"
+      />
+    </svg>
+    """
+  end
 end
