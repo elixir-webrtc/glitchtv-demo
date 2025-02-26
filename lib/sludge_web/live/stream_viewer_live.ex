@@ -32,34 +32,27 @@ defmodule SludgeWeb.StreamViewerLive do
               <.live_dropping />
             </span>
             <h1 class="text-2xl">
-              <span :if={@stream_metadata}>
-                {@stream_metadata.title}
-              </span>
-              <span :if={!@stream_metadata}>
-                The stream is offline
-              </span>
+              {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
             </h1>
           </div>
           <div :if={@stream_metadata} class="flex gap-4 text-sm">
-            <SludgeWeb.CoreComponents.dropping>
+            <.dropping>
               Started:&nbsp;
               <span class="text-indigo-800 font-medium">
                 {@start_difference} minutes ago
               </span>
-            </SludgeWeb.CoreComponents.dropping>
-            <SludgeWeb.CoreComponents.dropping>
+            </.dropping>
+            <.dropping>
               <span class="text-indigo-800 font-medium">
                 435 viewers
               </span>
-            </SludgeWeb.CoreComponents.dropping>
+            </.dropping>
             <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
-              Share <SludgeWeb.CoreComponents.icon name="hero-share" class="fill-indigo-800" />
+              Share <.icon name="hero-share" class="fill-indigo-800" />
             </button>
           </div>
-          <p>
-            <span :if={@stream_metadata}>
-              {@stream_metadata.description}
-            </span>
+          <p :if={@stream_metadata}>
+            {@stream_metadata.description}
           </p>
         </div>
       </div>
