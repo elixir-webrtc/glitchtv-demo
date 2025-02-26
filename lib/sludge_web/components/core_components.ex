@@ -156,8 +156,7 @@ defmodule SludgeWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        Attempting to reconnect
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
@@ -668,5 +667,13 @@ defmodule SludgeWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  def dropping(assigns) do
+    ~H"""
+    <div class="bg-violet-50 px-4 py-3 rounded-lg flex items-center">
+      {render_slot(@inner_block)}
+    </div>
+    """
   end
 end
