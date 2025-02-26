@@ -15,20 +15,6 @@ defmodule Sludge.Application do
         skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:sludge, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Sludge.PubSub},
-      {ExWebRTC.Recorder, [
-[
-  # # TODO SECRETISE
-  #     s3_config: [
-  #                  bucket_name: "gregorsamsa-rtpx",
-  #                  scheme: "https://",
-  #                  host: "fly.storage.tigris.dev",
-  #                  port: 443,
-  #                  access_key_id: "[REDACTED]",
-  #                  secret_access_key: "[REDACTED]"
-  #                ]
-],
-        [name: Sludge.Recorder]
-      ]},
       Sludge.RecordingsService,
       Sludge.StreamService,
       # Start a worker by calling: Sludge.Worker.start_link(arg)

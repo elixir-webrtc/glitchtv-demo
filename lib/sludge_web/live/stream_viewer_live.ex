@@ -1,6 +1,4 @@
 defmodule SludgeWeb.StreamViewerLive do
-  require Logger
-
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
@@ -8,29 +6,76 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def render(assigns) do
+    # TODO: Better logic for this
+    assigns =
+      assign(
+        assigns,
+        :start_difference,
+        if assigns.stream_metadata != nil do
+          {:ok, started_datetime} =
+            DateTime.from_naive(assigns.stream_metadata.started, "Etc/UTC")
+
+          {:ok, now_datetime} = DateTime.now("Etc/UTC")
+
+          DateTime.diff(now_datetime, started_datetime, :minute)
+        else
+          2
+        end
+      )
+
     ~H"""
-    <div class="flex">
-      <div>
-        <div :if={!@stream_metadata}>
-          No-one is streaming... :c
-        </div>
-        <div :if={@stream_metadata}>
-          <h1>{@stream_metadata.title}</h1>
-          <p>{@stream_metadata.description}</p>
-          <p>Started: {@stream_metadata.started}</p>
-        </div>
+    <div class="h-full flex gap-4 p-6">
+      <div class="flex-grow flex flex-col gap-4">
         <Player.live_render socket={@socket} player={@player} />
+        <div class="flex flex-col gap-4 flex-grow h-[0px]">
+          <div class="flex gap-3 items-center justify-start">
+            <span :if={@stream_metadata}>
+              <.live_dropping />
+            </span>
+            <h1 class="text-2xl">
+              {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
+            </h1>
+          </div>
+          <div :if={@stream_metadata} class="flex gap-4 text-sm">
+            <.dropping>
+              Started:&nbsp;
+              <span class="text-indigo-800 font-medium">
+                {@start_difference} minutes ago
+              </span>
+            </.dropping>
+            <.dropping>
+              <span class="text-indigo-800 font-medium">
+                435 viewers
+              </span>
+            </.dropping>
+            <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
+              Share <.icon name="hero-share" class="fill-indigo-800" />
+            </button>
+          </div>
+          <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
+            {@stream_metadata.description}
+          </p>
+        </div>
       </div>
-      <ChatLive.live_render socket={@socket} id="livechat" />
+      <div h-80>
+        <ChatLive.live_render socket={@socket} id="livechat" />
+      </div>
     </div>
+    """
+  end
+
+  defp live_dropping(assigns) do
+    ~H"""
+    <p class="uppercase inline text-sm bg-[#FF0011] p-1 px-2 text-xs text-white rounded-md font-medium tracking-[8%]">
+      live
+    </p>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
     socket =
-      socket
-      |> Player.attach(
+      Player.attach(socket,
         id: "player",
         publisher_id: "publisher",
         pubsub: Sludge.PubSub,

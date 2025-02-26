@@ -16,65 +16,56 @@ defmodule SludgeWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      id="#{@id}:chat"
-      class="flex flex-col overflow-hidden justify-end h-full text-wrap break-words w-96 p-4 border-brand/50 border-2 rounded-xl m-20 h-[600px]"
-    >
-      <div
-        id="#{@id}:chat-messages"
+    <div class="flex flex-col justify-between border border-indigo-200 rounded-lg">
+      <ul
+        class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
+        phx-hook="ScrollDownHook"
+        id="message_box"
         phx-update="stream"
-        class="overflow-y-scroll justify-end height-full"
       >
-        <div :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col pt-4 pb-4">
-          <div class="w-full flex">
-            <div class="font-semibold">
-              {msg.nickname}
-            </div>
-          </div>
-          <div class="message-body">
+        <li :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col gap-1">
+          <p class="text-indigo-800 text-[13px] text-medium">
+            {msg.author}
+          </p>
+          <p>
             {msg.body}
-          </div>
+          </p>
+        </li>
+      </ul>
+      <form
+        phx-change="validate-form"
+        phx-submit="submit-form"
+        class="flex flex-col gap-2 border-t border-indigo-200 p-6"
+      >
+        <textarea
+          class="border border-indigo-200 rounded-lg resize-none h-[128px] text-[13px]"
+          placeholder="Your message"
+          maxlength="500"
+          name="body"
+          value={@msg_body}
+          disabled={is_nil(@author)}
+        />
+        <div class="flex gap-2">
+          <input
+            class="flex-grow border border-indigo-200 rounded-lg px-4 text-[13px]"
+            placeholder="Your nickname"
+            maxlength="25"
+            name="author"
+            value={@author}
+            disabled={not is_nil(@author)}
+          />
+          <button
+            type="submit"
+            class="bg-indigo-800 text-white px-12 py-2 rounded-lg text-[13px] font-medium"
+          >
+            <%= if is_nil(@author) do %>
+              Join
+            <% else %>
+              Send
+            <% end %>
+          </button>
         </div>
-      </div>
-
-      <div class="flex flex-col justify-end py-2">
-        <div class="w-full py-2">
-          <form id="#{@id}:message-form" phx-change="validate-form" phx-submit="submit-form">
-            <input
-              type="text"
-              id="#{@id}:msg-body"
-              class="resize-none rounded-lg w-full border-brand/50 focus:border-brand/100 focus:outline-none focus:ring-0"
-              maxlength="500"
-              name="body"
-              value={@msg_body}
-              placeholder="type your message here..."
-              disabled={is_nil(@nickname)}
-            />
-            <div class="flex flex-row py-2 gap-2 justify-between">
-              <input
-                id="#{@id}:chat-nickname"
-                class="text-brand/80 font-semibold min-w-0 bg-brand/10 rounded-lg border pl-2 border-brand/50 focus:border-brand/100 focus:outline-none"
-                placeholder="Your Nickname"
-                maxlength="25"
-                name="nickname"
-                value={@nickname}
-                disabled={not is_nil(@nickname)}
-              />
-              <button
-                id="#{@id}:chat-button"
-                type="submit"
-                class="py-2 px-4 rounded-lg bg-brand/10 text-brand/80 font-semibold"
-              >
-                <%= if is_nil(@nickname) do %>
-                  Join
-                <% else %>
-                  Send
-                <% end %>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      </form>
     </div>
     """
   end
@@ -88,7 +79,7 @@ defmodule SludgeWeb.ChatLive do
     socket =
       socket
       |> stream(:messages, [])
-      |> assign(msg_body: nil, nickname: nil, next_msg_id: 0)
+      |> assign(msg_body: nil, author: nil, next_msg_id: 0)
 
     {:ok, socket}
   end
@@ -99,7 +90,7 @@ defmodule SludgeWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("validate-form", %{"nickname" => _nickname}, socket) do
+  def handle_event("validate-form", %{"author" => _author}, socket) do
     {:noreply, socket}
   end
 
@@ -110,29 +101,29 @@ defmodule SludgeWeb.ChatLive do
   def handle_event("submit-form", %{"body" => body}, socket) do
     if body != "" do
       id = socket.assigns.next_msg_id
-      send_message(body, socket.assigns.nickname, id)
+      send_message(body, socket.assigns.author, id)
       {:noreply, assign(socket, msg_body: nil, next_msg_id: id + 1)}
     else
       {:noreply, socket}
     end
   end
 
-  def handle_event("submit-form", %{"nickname" => nickname}, socket) do
-    nickname =
-      case nickname do
+  def handle_event("submit-form", %{"author" => author}, socket) do
+    author =
+      case author do
         "" -> nil
         n -> n
       end
 
-    {:noreply, assign(socket, nickname: nickname)}
+    {:noreply, assign(socket, author: author)}
   end
 
   defp subscribe() do
     Phoenix.PubSub.subscribe(Sludge.PubSub, "chatroom")
   end
 
-  defp send_message(body, nickname, id) do
-    msg = %{nickname: nickname, body: body, id: "#{nickname}:#{id}"}
+  defp send_message(body, author, id) do
+    msg = %{author: author, body: body, id: "#{author}:#{id}"}
     Logger.info("msg: #{inspect(msg)}")
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end

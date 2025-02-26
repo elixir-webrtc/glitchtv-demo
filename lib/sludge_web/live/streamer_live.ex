@@ -62,9 +62,9 @@ defmodule SludgeWeb.StreamerLive do
       Publisher.attach(socket,
         id: "publisher",
         pubsub: Sludge.PubSub,
-        recorder: Sludge.Recorder,
         on_connected: &on_connected/1,
-        on_disconnected: &on_disconnected/2,
+        on_disconnected: &on_disconnected/1,
+        on_recording_finished: &on_recording_finished/2,
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}],
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter),
         video_codecs: @video_codecs,
@@ -106,15 +106,15 @@ defmodule SludgeWeb.StreamerLive do
     Sludge.StreamService.stream_started()
   end
 
-  defp on_disconnected("publisher", {:ok, manifest, nil}) do
-    # XXX terrible name
-    metadata = Sludge.StreamService.get_stream_metadata()
-    Sludge.RecordingsService.recording_complete(manifest, metadata)
+  defp on_disconnected("publisher") do
     Sludge.StreamService.stream_ended()
   end
 
-  defp on_disconnected("publisher", nil) do
-    Sludge.StreamService.stream_ended()
+  # Gets called before on_disconnected, so everything is OK
+  defp on_recording_finished("publisher", {:ok, manifest, nil}) do
+    # XXX terrible name
+    metadata = Sludge.StreamService.get_stream_metadata()
+    Sludge.RecordingsService.recording_complete(manifest, metadata)
   end
 
   # defp page_title(:show), do: "Show Recording"

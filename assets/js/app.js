@@ -21,9 +21,13 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-import { createPublisherHook, createPlayerHook } from "main";
+import { createPublisherHook, createPlayerHook } from "live_ex_webrtc";
+import ScrollDownHook from "./ScrollDownHook";
 
 let Hooks = {};
+
+Hooks.ScrollDownHook = ScrollDownHook;
+
 const iceServers = [{ urls: "stun:stun.l.google.com:19302" }];
 Hooks.Publisher = createPublisherHook(iceServers);
 Hooks.Player = createPlayerHook(iceServers);
