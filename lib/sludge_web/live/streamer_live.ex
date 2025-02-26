@@ -2,6 +2,7 @@ defmodule SludgeWeb.StreamerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Publisher
+  alias SludgeWeb.ChatLive
 
   # XXX add this as defaults in live_ex_webrtc, so that recordings work by default?
   @video_codecs [
@@ -24,19 +25,34 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="text-[#606060] flex flex-col gap-6 py-2.5">
-       <.simple_form for={@form} phx-submit="stream-config-update">
-        <.input type="textarea" field={@form[:title]} class="max-w-2xl rounded-lg h-12" placeholder="Title" />
-        <.input type="textarea" field={@form[:description]} class="max-w-2xl rounded-lg h-40" placeholder="Description" />
-        <:actions>
-          <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
-            Save
-          </.button>
-        </:actions>
-      </.simple_form>
-    </div>
+    <div class="flex">
+      <div>
+        <div class="text-[#606060] flex flex-col gap-6 py-2.5">
+          <.simple_form for={@form} phx-submit="stream-config-update">
+            <.input
+              type="textarea"
+              field={@form[:title]}
+              class="max-w-2xl rounded-lg h-12"
+              placeholder="Title"
+            />
+            <.input
+              type="textarea"
+              field={@form[:description]}
+              class="max-w-2xl rounded-lg h-40"
+              placeholder="Description"
+            />
+            <:actions>
+              <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
+                Save
+              </.button>
+            </:actions>
+          </.simple_form>
+        </div>
 
-    <Publisher.live_render socket={@socket} publisher={@publisher} />
+        <Publisher.live_render socket={@socket} publisher={@publisher} />
+      </div>
+      <ChatLive.live_render socket={@socket} id="livechat" />
+    </div>
     """
   end
 
@@ -61,15 +77,20 @@ defmodule SludgeWeb.StreamerLive do
 
   @impl true
   def handle_params(_params, _, socket) do
-    {:noreply,
-     socket
-     # |> assign(:page_title, page_title(socket.assigns.live_action))
-     # |> assign(:recording, Recordings.get_recording!(id))}
+    {
+      :noreply,
+      socket
+      # |> assign(:page_title, page_title(socket.assigns.live_action))
+      # |> assign(:recording, Recordings.get_recording!(id))}
     }
   end
 
   @impl true
-  def handle_event("stream-config-update", %{"title" => title, "description" => description}, socket) do
+  def handle_event(
+        "stream-config-update",
+        %{"title" => title, "description" => description},
+        socket
+      ) do
     Sludge.StreamService.put_stream_metadata(%{title: title, description: description})
 
     {:noreply, socket}

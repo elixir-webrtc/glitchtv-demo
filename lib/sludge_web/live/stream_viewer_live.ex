@@ -4,6 +4,7 @@ defmodule SludgeWeb.StreamViewerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
+  alias SludgeWeb.ChatLive
 
   @impl true
   def render(assigns) do
@@ -20,7 +21,7 @@ defmodule SludgeWeb.StreamViewerLive do
         </div>
         <Player.live_render socket={@socket} player={@player} />
       </div>
-      <SludgeWeb.ChatLive.live_render socket={@socket} id="livechat" />
+      <ChatLive.live_render socket={@socket} id="livechat" />
     </div>
     """
   end
