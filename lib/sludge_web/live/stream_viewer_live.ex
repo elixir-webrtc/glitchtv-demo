@@ -2,7 +2,10 @@ defmodule SludgeWeb.StreamViewerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
+  alias Phoenix.Presence
+  alias Phoenix.Socket.Broadcast
   alias SludgeWeb.ChatLive
+  alias SludgeWeb.Presence
 
   @impl true
   def render(assigns) do
@@ -45,7 +48,7 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.dropping>
               <span class="text-indigo-800 font-medium">
-                435 viewers
+                {@viewers_count} viewers
               </span>
             </.dropping>
             <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
@@ -74,6 +77,11 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
+      {:ok, _ref} = Presence.track(self(), "viewers", "count", %{})
+    end
+
     socket =
       Player.attach(socket,
         id: "player",
@@ -82,6 +90,7 @@ defmodule SludgeWeb.StreamViewerLive do
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}]
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter)
       )
+      |> assign(:viewers_count, get_viewers_count())
 
     {:ok, socket}
   end
@@ -98,5 +107,15 @@ defmodule SludgeWeb.StreamViewerLive do
     }
   end
 
-  # defp page_title(:show), do: "Show Recording"
+  @impl Phoenix.LiveView
+  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+    {:noreply, assign(socket, :viewers_count, get_viewers_count())}
+  end
+
+  def get_viewers_count() do
+    case Presence.list("viewers") do
+      %{"count" => %{metas: list}} -> Enum.count(list)
+      _other -> 0
+    end
+  end
 end
