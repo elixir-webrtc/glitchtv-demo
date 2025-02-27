@@ -1,11 +1,8 @@
 defmodule SludgeWeb.ChatLive do
-  require Logger
-
   use Phoenix.LiveView
 
   attr(:socket, Phoenix.LiveView.Socket, required: true, doc: "Parent live view socket")
   attr(:id, :string, required: true, doc: "Component id")
-  # attr(:pubsub, Phoenix.PubSub, required: true, doc: "PubSub for chat messages")
 
   def live_render(assigns) do
     ~H"""
@@ -124,7 +121,6 @@ defmodule SludgeWeb.ChatLive do
 
   defp send_message(body, author, id) do
     msg = %{author: author, body: body, id: "#{author}:#{id}"}
-    Logger.info("msg: #{inspect(msg)}")
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end
