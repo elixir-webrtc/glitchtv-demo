@@ -78,8 +78,9 @@ defmodule SludgeWeb.StreamViewerLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
-      {:ok, _ref} = Presence.track(self(), "viewers", "count", %{})
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "stream_info:status")
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "stream_info:viewers")
+      {:ok, _ref} = Presence.track(self(), "stream_info:viewers", "viewers_count", %{})
     end
 
     socket =
@@ -108,13 +109,21 @@ defmodule SludgeWeb.StreamViewerLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+  def handle_info(%{event: "started", metadata: metadata}, socket) do
+    {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info(:finished, socket) do
+    {:noreply, assign(socket, :stream_metadata, nil)}
+  end
+
+  def handle_info(%Broadcast{event: "presence_diff"}, socket) do
     {:noreply, assign(socket, :viewers_count, get_viewers_count())}
   end
 
   def get_viewers_count() do
-    case Presence.list("viewers") do
-      %{"count" => %{metas: list}} -> Enum.count(list)
+    case Presence.list("stream_info:viewers") do
+      %{"viewers_count" => %{metas: list}} -> Enum.count(list)
       _other -> 0
     end
   end

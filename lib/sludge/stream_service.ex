@@ -4,7 +4,7 @@ defmodule Sludge.StreamService do
   use GenServer
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__,  args, name: __MODULE__)
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
   def get_stream_metadata do
@@ -29,7 +29,8 @@ defmodule Sludge.StreamService do
       streaming?: false,
       title: nil,
       description: nil,
-      started: nil
+      started: nil,
+      pubsub: Sludge.PubSub
     }
 
     {:ok, state}
@@ -37,13 +38,7 @@ defmodule Sludge.StreamService do
 
   @impl true
   def handle_call(:get_stream_metadata, _from, %{streaming?: true} = state) do
-    resp = %{
-      title: state.title || "",
-      description: state.description || "",
-      started: state.started
-    }
-    
-    {:reply, resp, state}
+    {:reply, get_metadata(state), state}
   end
 
   @impl true
@@ -53,33 +48,35 @@ defmodule Sludge.StreamService do
 
   @impl true
   def handle_call({:put_stream_metadata, metadata}, _from, state) do
-    state = %{state |
-      title: metadata.title || "",
-      description: metadata.description || "",
-    }
+    state = %{state | title: metadata.title || "", description: metadata.description || ""}
 
     {:reply, :ok, state}
   end
 
   @impl true
   def handle_call(:stream_started, _from, state) do
-    state = %{ state |
-      streaming?: true,
-      started: DateTime.utc_now()
-    }
+    state = %{state | streaming?: true, started: DateTime.utc_now()}
+
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "stream_info:status", %{
+      event: "started",
+      metadata: get_metadata(%{state | streaming?: true, started: DateTime.utc_now()})
+    })
 
     {:reply, :ok, state}
   end
 
   @impl true
   def handle_call(:stream_ended, _from, state) do
-    state = %{ state |
-      streaming?: false,
-      title: nil,
-      description: nil,
-      started: nil
-    }
-
+    state = %{state | streaming?: false, title: nil, description: nil, started: nil}
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "stream_info:status", :finished)
     {:reply, :ok, state}
+  end
+
+  defp get_metadata(state) do
+    %{
+      title: state.title || "",
+      description: state.description || "",
+      started: state.started
+    }
   end
 end
