@@ -2,6 +2,7 @@ defmodule SludgeWeb.StreamViewerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
+  alias SludgeWeb.ChatLive
 
   @impl true
   def render(assigns) do
@@ -56,36 +57,8 @@ defmodule SludgeWeb.StreamViewerLive do
           </p>
         </div>
       </div>
-      <div class="flex flex-col justify-between border border-indigo-200 rounded-lg">
-        <ul
-          class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
-          phx-hook="ScrollDownHook"
-          id="message_box"
-        >
-          <li :for={comment <- @comments} class="flex flex-col gap-1">
-            <p class="text-indigo-800 text-[13px] text-medium">
-              {comment.author}
-            </p>
-            <p>
-              {comment.text}
-            </p>
-          </li>
-        </ul>
-        <form class="flex flex-col gap-2 border-t border-indigo-200 p-6">
-          <textarea
-            class="border border-indigo-200 rounded-lg resize-none h-[128px] text-[13px]"
-            placeholder="Your message"
-          />
-          <div class="flex gap-2">
-            <input
-              class="flex-grow border border-indigo-200 rounded-lg px-4 text-[13px]"
-              placeholder="Your Nickname"
-            />
-            <button class="bg-indigo-800 text-white px-12 py-2 rounded-lg text-[13px] font-medium">
-              Send
-            </button>
-          </div>
-        </form>
+      <div class="flex justify-stretch">
+        <ChatLive.live_render socket={@socket} id="livechat" />
       </div>
     </div>
     """
@@ -120,16 +93,6 @@ defmodule SludgeWeb.StreamViewerLive do
       socket
       # XXX make it update pubsub or event or sth dont care really
       |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
-      |> assign(
-        :comments,
-        Enum.map(1..20, fn _ ->
-          %{
-            author: "AnthonyBrookeWood",
-            text:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec ante ac nulla vulputate ultricies."
-          }
-        end)
-      )
       # |> assign(:page_title, page_title(socket.assigns.live_action))
       # |> assign(:recording, Recordings.get_recording!(id))}
     }
