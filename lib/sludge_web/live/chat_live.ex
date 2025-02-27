@@ -16,7 +16,7 @@ defmodule SludgeWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-between border border-indigo-200 rounded-lg">
+    <div class="flex flex-col justify-between border border-indigo-200 rounded-lg h-full">
       <ul
         class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
         phx-hook="ScrollDownHook"
