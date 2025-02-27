@@ -1,8 +1,10 @@
 defmodule SludgeWeb.StreamerLive do
   use SludgeWeb, :live_view
 
+  alias Phoenix.Socket.Broadcast
   alias LiveExWebRTC.Publisher
   alias SludgeWeb.ChatLive
+  alias SludgeWeb.StreamViewerLive
 
   # XXX add this as defaults in live_ex_webrtc, so that recordings work by default?
   @video_codecs [
@@ -50,6 +52,9 @@ defmodule SludgeWeb.StreamerLive do
         </div>
 
         <Publisher.live_render socket={@socket} publisher={@publisher} />
+        <div>
+          {@viewers_count} viewers
+        </div>
       </div>
       <ChatLive.live_render socket={@socket} id="livechat" />
     </div>
@@ -58,6 +63,10 @@ defmodule SludgeWeb.StreamerLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
+    end
+
     socket =
       Publisher.attach(socket,
         id: "publisher",
@@ -71,6 +80,7 @@ defmodule SludgeWeb.StreamerLive do
         audio_codecs: @audio_codecs
       )
       |> assign(:form, %{"title" => "", "description" => ""} |> to_form())
+      |> assign(:viewers_count, StreamViewerLive.get_viewers_count())
 
     {:ok, socket}
   end
@@ -115,6 +125,11 @@ defmodule SludgeWeb.StreamerLive do
     # XXX terrible name
     metadata = Sludge.StreamService.get_stream_metadata()
     Sludge.RecordingsService.recording_complete(manifest, metadata)
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+    {:noreply, assign(socket, :viewers_count, StreamViewerLive.get_viewers_count())}
   end
 
   # defp page_title(:show), do: "Show Recording"

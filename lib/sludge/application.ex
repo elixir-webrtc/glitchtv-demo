@@ -11,8 +11,7 @@ defmodule Sludge.Application do
       SludgeWeb.Telemetry,
       Sludge.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:sludge, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:sludge, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:sludge, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Sludge.PubSub},
       Sludge.RecordingsService,
@@ -20,6 +19,7 @@ defmodule Sludge.Application do
       # Start a worker by calling: Sludge.Worker.start_link(arg)
       # {Sludge.Worker, arg},
       # Start to serve requests, typically the last entry
+      SludgeWeb.Presence,
       SludgeWeb.Endpoint
     ]
 
