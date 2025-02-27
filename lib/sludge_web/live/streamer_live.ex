@@ -1,8 +1,8 @@
 defmodule SludgeWeb.StreamerLive do
   use SludgeWeb, :live_view
 
-  alias Phoenix.Socket.Broadcast
   alias LiveExWebRTC.Publisher
+  alias Phoenix.Socket.Broadcast
   alias SludgeWeb.ChatLive
   alias SludgeWeb.StreamViewerLive
 
@@ -50,7 +50,6 @@ defmodule SludgeWeb.StreamerLive do
             </:actions>
           </.simple_form>
         </div>
-
         <Publisher.live_render socket={@socket} publisher={@publisher} />
         <div>
           {@viewers_count} viewers

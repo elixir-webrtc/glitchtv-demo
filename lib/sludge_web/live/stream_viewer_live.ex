@@ -1,9 +1,9 @@
 defmodule SludgeWeb.StreamViewerLive do
-  alias Phoenix.Presence
   use SludgeWeb, :live_view
 
-  alias Phoenix.Socket.Broadcast
   alias LiveExWebRTC.Player
+  alias Phoenix.Presence
+  alias Phoenix.Socket.Broadcast
   alias SludgeWeb.ChatLive
   alias SludgeWeb.Presence
 
