@@ -47,9 +47,7 @@ defmodule SludgeWeb.StreamViewerLive do
                 435 viewers
               </span>
             </.dropping>
-            <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
-              Share <.icon name="hero-share" class="fill-indigo-800" />
-            </button>
+            <.share_button />
           </div>
           <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
