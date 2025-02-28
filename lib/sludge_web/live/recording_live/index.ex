@@ -5,18 +5,13 @@ defmodule SludgeWeb.RecordingLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :recordings, Recordings.list_recordings())}
-  end
+    socket =
+      socket
+      |> assign(:page_title, "Recordings")
+      |> assign(:recording, nil)
+      |> stream(:recordings, Recordings.list_recordings())
 
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Recordings")
-    |> assign(:recording, nil)
+    {:ok, socket}
   end
 
   @impl true

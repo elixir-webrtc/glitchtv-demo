@@ -25,9 +25,19 @@ defmodule SludgeWeb.StreamerLive do
   def render(assigns) do
     ~H"""
     <div class="text-[#606060] flex flex-col gap-6 py-2.5">
-       <.simple_form for={@form} phx-submit="stream-config-update">
-        <.input type="textarea" field={@form[:title]} class="max-w-2xl rounded-lg h-12" placeholder="Title" />
-        <.input type="textarea" field={@form[:description]} class="max-w-2xl rounded-lg h-40" placeholder="Description" />
+      <.simple_form for={@form} phx-submit="stream-config-update">
+        <.input
+          type="textarea"
+          field={@form[:title]}
+          class="max-w-2xl rounded-lg h-12"
+          placeholder="Title"
+        />
+        <.input
+          type="textarea"
+          field={@form[:description]}
+          class="max-w-2xl rounded-lg h-40"
+          placeholder="Description"
+        />
         <:actions>
           <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
             Save
@@ -55,31 +65,21 @@ defmodule SludgeWeb.StreamerLive do
         audio_codecs: @audio_codecs
       )
       |> assign(:form, %{"title" => "", "description" => ""} |> to_form())
+      |> assign(:page_title, "Streamer Panel")
 
     {:ok, socket}
   end
 
   @impl true
-  def handle_params(_params, _, socket) do
-    {:noreply,
-     socket
-     # |> assign(:page_title, page_title(socket.assigns.live_action))
-     # |> assign(:recording, Recordings.get_recording!(id))}
-    }
-  end
-
-  @impl true
-  def handle_event("stream-config-update", %{"title" => title, "description" => description}, socket) do
+  def handle_event(
+        "stream-config-update",
+        %{"title" => title, "description" => description},
+        socket
+      ) do
     Sludge.StreamService.put_stream_metadata(%{title: title, description: description})
 
     {:noreply, socket}
   end
-
-  # @impl true
-  # def handle_event("validate", params, socket) do
-
-  #   {:noreply, socket}
-  # end
 
   defp on_connected("publisher") do
     Sludge.StreamService.stream_started()
@@ -95,6 +95,4 @@ defmodule SludgeWeb.StreamerLive do
     metadata = Sludge.StreamService.get_stream_metadata()
     Sludge.RecordingsService.recording_complete(manifest, metadata)
   end
-
-  # defp page_title(:show), do: "Show Recording"
 end

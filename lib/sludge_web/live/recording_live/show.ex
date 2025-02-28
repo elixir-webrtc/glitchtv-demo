@@ -18,7 +18,7 @@ defmodule SludgeWeb.RecordingLive.Show do
 
     socket =
       socket
-      |> assign(:page_title, page_title(socket.assigns.live_action))
+      |> assign(:page_title, recording.title)
       |> assign(:recording, recording)
 
     if connected?(socket) do
@@ -27,6 +27,4 @@ defmodule SludgeWeb.RecordingLive.Show do
 
     {:noreply, socket}
   end
-
-  defp page_title(:show), do: "Show Recording"
 end
