@@ -9,20 +9,15 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def render(assigns) do
-    # TODO: Better logic for this
     assigns =
       assign(
         assigns,
         :start_difference,
-        if assigns.stream_metadata != nil do
-          {:ok, started_datetime} =
-            DateTime.from_naive(assigns.stream_metadata.started, "Etc/UTC")
-
-          {:ok, now_datetime} = DateTime.now("Etc/UTC")
-
-          DateTime.diff(now_datetime, started_datetime, :minute)
+        if assigns.stream_metadata[:started] != nil do
+          DateTime.utc_now()
+          |> DateTime.diff(assigns.stream_metadata.started, :minute)
         else
-          2
+          0
         end
       )
 
@@ -32,19 +27,23 @@ defmodule SludgeWeb.StreamViewerLive do
         <Player.live_render socket={@socket} player={@player} />
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
-            <span :if={@stream_metadata}>
+            <%= if @stream_metadata.streaming? do %>
               <.live_dropping />
-            </span>
+            <% end %>
             <h1 class="text-2xl">
-              {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
+              {@stream_metadata.title}
             </h1>
           </div>
-          <div :if={@stream_metadata} class="flex gap-4 text-sm">
+          <div class="flex gap-4 text-sm">
             <.dropping>
-              Started:&nbsp;
-              <span class="text-indigo-800 font-medium">
-                {@start_difference} minutes ago
-              </span>
+              <%= if @stream_metadata.streaming? do %>
+                Started:&nbsp;
+                <span class="text-indigo-800 font-medium">
+                  {@start_difference} minutes ago
+                </span>
+              <% else %>
+                Stream is offline
+              <% end %>
             </.dropping>
             <.dropping>
               <span class="text-indigo-800 font-medium">
@@ -55,7 +54,7 @@ defmodule SludgeWeb.StreamViewerLive do
               Share <.icon name="hero-share" class="fill-indigo-800" />
             </button>
           </div>
-          <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
+          <p :if={@stream_metadata.streaming?} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
           </p>
         </div>
@@ -109,12 +108,19 @@ defmodule SludgeWeb.StreamViewerLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(%{event: "started", metadata: metadata}, socket) do
+  def handle_info({:started, started}, socket) do
+    metadata = %{socket.assigns.stream_metadata | streaming?: true, started: started}
+    {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info({:changed, {title, description}}, socket) do
+    metadata = %{socket.assigns.stream_metadata | title: title, description: description}
     {:noreply, assign(socket, :stream_metadata, metadata)}
   end
 
   def handle_info(:finished, socket) do
-    {:noreply, assign(socket, :stream_metadata, nil)}
+    metadata = %{socket.assigns.stream_metadata | streaming?: false, started: nil}
+    {:noreply, assign(socket, :stream_metadata, metadata)}
   end
 
   def handle_info(%Broadcast{event: "presence_diff"}, socket) do
