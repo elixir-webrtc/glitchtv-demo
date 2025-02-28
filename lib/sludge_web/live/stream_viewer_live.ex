@@ -2,6 +2,10 @@ defmodule SludgeWeb.StreamViewerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Player
+  alias Phoenix.Presence
+  alias Phoenix.Socket.Broadcast
+  alias SludgeWeb.ChatLive
+  alias SludgeWeb.Presence
 
   @impl true
   def render(assigns) do
@@ -44,48 +48,18 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.dropping>
               <span class="text-indigo-800 font-medium">
-                435 viewers
+                {@viewers_count} viewers
               </span>
             </.dropping>
-            <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
-              Share <.icon name="hero-share" class="fill-indigo-800" />
-            </button>
+            <.share_button />
           </div>
           <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
           </p>
         </div>
       </div>
-      <div class="flex flex-col justify-between border border-indigo-200 rounded-lg">
-        <ul
-          class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
-          phx-hook="ScrollDownHook"
-          id="message_box"
-        >
-          <li :for={comment <- @comments} class="flex flex-col gap-1">
-            <p class="text-indigo-800 text-[13px] text-medium">
-              {comment.author}
-            </p>
-            <p>
-              {comment.text}
-            </p>
-          </li>
-        </ul>
-        <form class="flex flex-col gap-2 border-t border-indigo-200 p-6">
-          <textarea
-            class="border border-indigo-200 rounded-lg resize-none h-[128px] text-[13px]"
-            placeholder="Your message"
-          />
-          <div class="flex gap-2">
-            <input
-              class="flex-grow border border-indigo-200 rounded-lg px-4 text-[13px]"
-              placeholder="Your Nickname"
-            />
-            <button class="bg-indigo-800 text-white px-12 py-2 rounded-lg text-[13px] font-medium">
-              Send
-            </button>
-          </div>
-        </form>
+      <div class="flex justify-stretch">
+        <ChatLive.live_render socket={@socket} id="livechat" />
       </div>
     </div>
     """
@@ -101,6 +75,11 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
+      {:ok, _ref} = Presence.track(self(), "viewers", "count", %{})
+    end
+
     socket =
       Player.attach(socket,
         id: "player",
@@ -111,6 +90,7 @@ defmodule SludgeWeb.StreamViewerLive do
       )
       |> assign(:page_title, "Stream")
       |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
+      |> assign(:viewers_count, get_viewers_count())
 
     {:ok, socket}
   end
@@ -121,16 +101,21 @@ defmodule SludgeWeb.StreamViewerLive do
       :noreply,
       socket
       # XXX make it update pubsub or event or sth dont care really
-      |> assign(
-        :comments,
-        Enum.map(1..20, fn _ ->
-          %{
-            author: "AnthonyBrookeWood",
-            text:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec ante ac nulla vulputate ultricies."
-          }
-        end)
-      )
+      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
+      # |> assign(:page_title, page_title(socket.assigns.live_action))
+      # |> assign(:recording, Recordings.get_recording!(id))}
     }
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+    {:noreply, assign(socket, :viewers_count, get_viewers_count())}
+  end
+
+  def get_viewers_count() do
+    case Presence.list("viewers") do
+      %{"count" => %{metas: list}} -> Enum.count(list)
+      _other -> 0
+    end
   end
 end

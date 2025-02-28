@@ -2,6 +2,9 @@ defmodule SludgeWeb.StreamerLive do
   use SludgeWeb, :live_view
 
   alias LiveExWebRTC.Publisher
+  alias Phoenix.Socket.Broadcast
+  alias SludgeWeb.ChatLive
+  alias SludgeWeb.StreamViewerLive
 
   # XXX add this as defaults in live_ex_webrtc, so that recordings work by default?
   @video_codecs [
@@ -24,34 +27,45 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="text-[#606060] flex flex-col gap-6 py-2.5">
-      <.simple_form for={@form} phx-submit="stream-config-update">
-        <.input
-          type="textarea"
-          field={@form[:title]}
-          class="max-w-2xl rounded-lg h-12"
-          placeholder="Title"
-        />
-        <.input
-          type="textarea"
-          field={@form[:description]}
-          class="max-w-2xl rounded-lg h-40"
-          placeholder="Description"
-        />
-        <:actions>
-          <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
-            Save
-          </.button>
-        </:actions>
-      </.simple_form>
+    <div class="flex">
+      <div>
+        <div class="text-[#606060] flex flex-col gap-6 py-2.5">
+          <.simple_form for={@form} phx-submit="stream-config-update">
+            <.input
+              type="textarea"
+              field={@form[:title]}
+              class="max-w-2xl rounded-lg h-12"
+              placeholder="Title"
+            />
+            <.input
+              type="textarea"
+              field={@form[:description]}
+              class="max-w-2xl rounded-lg h-40"
+              placeholder="Description"
+            />
+            <:actions>
+              <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
+                Save
+              </.button>
+            </:actions>
+          </.simple_form>
+        </div>
+        <Publisher.live_render socket={@socket} publisher={@publisher} />
+        <div>
+          {@viewers_count} viewers
+        </div>
+      </div>
+      <ChatLive.live_render socket={@socket} id="livechat" />
     </div>
-
-    <Publisher.live_render socket={@socket} publisher={@publisher} />
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
+    end
+
     socket =
       Publisher.attach(socket,
         id: "publisher",
@@ -66,9 +80,12 @@ defmodule SludgeWeb.StreamerLive do
       )
       |> assign(:form, %{"title" => "", "description" => ""} |> to_form())
       |> assign(:page_title, "Streamer Panel")
+      |> assign(:viewers_count, StreamViewerLive.get_viewers_count())
 
     {:ok, socket}
   end
+
+  @impl true
 
   @impl true
   def handle_event(
@@ -94,5 +111,10 @@ defmodule SludgeWeb.StreamerLive do
     # XXX terrible name
     metadata = Sludge.StreamService.get_stream_metadata()
     Sludge.RecordingsService.recording_complete(manifest, metadata)
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+    {:noreply, assign(socket, :viewers_count, StreamViewerLive.get_viewers_count())}
   end
 end
