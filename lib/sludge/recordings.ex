@@ -42,14 +42,12 @@ defmodule Sludge.Recordings do
   """
   def get_recording!(id), do: Repo.get!(Recording, id)
 
-  def get_and_increment_views!(id) do
+  def get_recording(id) do
     {1, [recording]} =
       from(r in Recording,
         select: r,
-        update: [inc: [views_count: 1]],
         where: r.id == ^id
       )
-      |> Repo.update_all([])
 
     recording
   end
@@ -117,5 +115,11 @@ defmodule Sludge.Recordings do
   """
   def change_recording(%Recording{} = recording, attrs \\ %{}) do
     Recording.changeset(recording, attrs)
+  end
+
+  def increment_recording_views(recording) do
+    recording
+    |> Recording.changeset(%{views_count: recording.views_count + 1})
+    |> Repo.update()
   end
 end
