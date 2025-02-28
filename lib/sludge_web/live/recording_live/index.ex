@@ -2,7 +2,6 @@ defmodule SludgeWeb.RecordingLive.Index do
   use SludgeWeb, :live_view
 
   alias Sludge.Recordings
-  alias Sludge.Recordings.Recording
 
   @impl true
   def mount(_params, _session, socket) do
@@ -31,5 +30,21 @@ defmodule SludgeWeb.RecordingLive.Index do
     {:ok, _} = Recordings.delete_recording(recording)
 
     {:noreply, stream_delete(socket, :recordings, recording)}
+  end
+
+  defp seconds_to_duration_string(seconds) do
+    hours = div(seconds, 3600)
+    minutes = div(seconds - hours * 3600, 60)
+    seconds = rem(seconds, 60)
+
+    "#{pad_number(hours)}:#{pad_number(minutes)}:#{pad_number(seconds)}"
+  end
+
+  defp pad_number(number) when number < 10 do
+    "0#{number}"
+  end
+
+  defp pad_number(number) do
+    "#{number}"
   end
 end

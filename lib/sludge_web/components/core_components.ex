@@ -676,4 +676,16 @@ defmodule SludgeWeb.CoreComponents do
     </div>
     """
   end
+
+  def share_button(assigns) do
+    ~H"""
+    <button
+      class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center hover:bg-indigo-50"
+      phx-hook="ShareButton"
+      id="ShareButton"
+    >
+      Share <.icon name="hero-share" class="fill-indigo-800 w-5 h-5" />
+    </button>
+    """
+  end
 end

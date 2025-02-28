@@ -21,6 +21,11 @@ defmodule Sludge.Recordings do
     Repo.all(Recording)
   end
 
+  def list_five_recordings do
+    query = from r in Recording, limit: 5
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single recording.
 
