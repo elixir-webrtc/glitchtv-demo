@@ -29,7 +29,7 @@ defmodule SludgeWeb.StreamViewerLive do
     ~H"""
     <div class="h-full flex gap-4">
       <div class="flex-grow flex flex-col gap-4">
-        <Player.live_render socket={@socket} player={@player} class="max-h-[448px] w-full" />
+        <Player.live_render socket={@socket} player={@player} class="max-h-[480px] w-full" />
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
             <span :if={@stream_metadata}>
