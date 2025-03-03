@@ -1,13 +1,20 @@
-<div class="h-full flex gap-4 p-6">
+<div class="h-full flex gap-4">
   <div class="flex-grow flex flex-col gap-4">
-    <video src={@recording.link} poster={@recording.thumbnail_link} controls />
-    <div class="flex flex-col gap-4 flex-grow h-[0px]">
+    <div class="flex-shrink w-full max-h-[448px]">
+      <video
+        src={@recording.link}
+        poster={@recording.thumbnail_link}
+        controls
+        class="object-contain w-full h-full bg-black"
+      />
+    </div>
+    <div class="flex-grow flex flex-col gap-4 h-[0px]">
       <div class="flex gap-3 items-center justify-start">
-        <h1 class="text-2xl">
+        <h1 class="text-2xl line-clamp-2">
           {@recording.title}
         </h1>
       </div>
-      <div class="flex gap-4 text-sm">
+      <div class="flex gap-4 text-sm h-[44px] items-stretch">
         <.dropping>
           Recorded:&nbsp;
           <span class="text-indigo-800 font-medium">
@@ -22,21 +29,24 @@
         </.dropping>
         <.share_button />
       </div>
-      <p class="flex-grow overflow-y-scroll">
+      <p class="overflow-y-scroll">
         {@recording.description}
       </p>
     </div>
   </div>
-  <div class="flex flex-col justify-between rounded-lg">
-    <ul class="h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 px-6">
-      <li :for={recording <- @recordings}>
+  <div class="flex flex-col justify-start flex-none">
+    <ul class="flex flex-col gap-4">
+      <li
+        :for={recording <- @recordings}
+        class="w-[317px] pb-4 border-b border-indigo-200 last:border-0"
+      >
         <.link href={"/recordings/#{recording.id}"} class="flex gap-4">
           <img
             src={recording.thumbnail_link}
             class="h-[64px] lg:h-[96px] rounded-lg object-contain"
           />
           <div class="flex flex-col justify-between py-2">
-            <p class="font-medium text-sm">
+            <p class="text-sm line-clamp-2">
               {recording.title}
             </p>
             <div class="flex items-center gap-1">
@@ -48,11 +58,11 @@
           </div>
         </.link>
       </li>
-      <.link href="/recordings">
-        <button class="flex items-center justify-center gap-1 border border-indigo-200 py-4 rounded-lg w-full text-indigo-800 font-medium hover:bg-indigo-50">
-          Browse all <.icon name="hero-arrow-right" class="w-4 h-4" />
-        </button>
-      </.link>
     </ul>
+    <.link href="/recordings">
+      <button class="flex items-center justify-center gap-1 border border-indigo-200 rounded-lg w-full text-indigo-800 text-sm font-medium hover:bg-indigo-50 h-[44px]">
+        Browse all <.icon name="hero-arrow-right" class="w-4 h-4" />
+      </button>
+    </.link>
   </div>
 </div>

@@ -27,9 +27,9 @@ defmodule SludgeWeb.StreamViewerLive do
       )
 
     ~H"""
-    <div class="h-full flex gap-4 p-6">
+    <div class="h-full flex gap-4">
       <div class="flex-grow flex flex-col gap-4">
-        <Player.live_render socket={@socket} player={@player} />
+        <Player.live_render socket={@socket} player={@player} class="max-h-[448px] w-full" />
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
             <span :if={@stream_metadata}>
@@ -39,7 +39,7 @@ defmodule SludgeWeb.StreamViewerLive do
               {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
             </h1>
           </div>
-          <div :if={@stream_metadata} class="flex gap-4 text-sm">
+          <div :if={@stream_metadata} class="flex gap-4 text-sm h-[44px] items-stretch">
             <.dropping>
               Started:&nbsp;
               <span class="text-indigo-800 font-medium">
