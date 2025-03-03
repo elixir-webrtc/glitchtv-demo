@@ -3,3 +3,18 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+/* Please add those fonts to /priv/static/fonts */
+@font-face {
+    font-family: 'Aeonik';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/Aeonik-Regular.otf')
+}
+
+@font-face {
+    font-family: 'Aeonik';
+    font-style: normal;
+    font-weight: 500;
+    src: url('/fonts/Aeonik-Medium.otf')
+}
