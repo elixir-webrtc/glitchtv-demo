@@ -35,7 +35,7 @@ defmodule SludgeWeb.StreamViewerLive do
             <span :if={@stream_metadata}>
               <.live_dropping />
             </span>
-            <h1 class="text-2xl">
+            <h1 class="text-2xl line-clamp-2">
               {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
             </h1>
           </div>
