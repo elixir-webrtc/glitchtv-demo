@@ -95,18 +95,6 @@ defmodule SludgeWeb.StreamViewerLive do
     {:ok, socket}
   end
 
-  @impl true
-  def handle_params(_params, _, socket) do
-    {
-      :noreply,
-      socket
-      # XXX make it update pubsub or event or sth dont care really
-      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
-      # |> assign(:page_title, page_title(socket.assigns.live_action))
-      # |> assign(:recording, Recordings.get_recording!(id))}
-    }
-  end
-
   @impl Phoenix.LiveView
   def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
     {:noreply, assign(socket, :viewers_count, get_viewers_count())}
