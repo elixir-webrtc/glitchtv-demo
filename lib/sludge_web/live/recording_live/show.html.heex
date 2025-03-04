@@ -18,19 +18,19 @@
       <div class="flex gap-4 text-sm h-[44px] items-stretch">
         <.dropping>
           Recorded:&nbsp;
-          <span class="text-indigo-800 font-medium">
+          <span class="text-indigo-800 font-medium dark:text-neutral-200">
             {Calendar.strftime(@recording.date, "%d %b %Y")}
           </span>
         </.dropping>
         <.dropping>
           Views:&nbsp;
-          <span class="text-indigo-800 font-medium">
+          <span class="text-indigo-800 font-medium dark:text-neutral-200">
             {@recording.views_count}
           </span>
         </.dropping>
         <.share_button />
       </div>
-      <p class="overflow-y-scroll">
+      <p class="overflow-y-scroll dark:text-neutral-400">
         {@recording.description}
       </p>
     </div>
@@ -39,7 +39,7 @@
     <ul class="flex flex-col gap-4">
       <li
         :for={recording <- @recordings}
-        class="w-[317px] pb-4 border-b border-indigo-200 last:border-0"
+        class="w-[317px] pb-4 border-b border-indigo-200 last:border-0 dark:border-zinc-800"
       >
         <.link href={"/recordings/#{recording.id}"} class="flex gap-4">
           <img
@@ -47,12 +47,13 @@
             class="h-[64px] lg:h-[96px] rounded-lg object-contain"
           />
           <div class="flex flex-col justify-between py-2">
-            <p class="text-sm line-clamp-2">
+            <p class="text-sm line-clamp-3 dark:text-neutral-200">
               {recording.title}
             </p>
             <div class="flex items-center gap-1">
-              <.icon name="hero-eye" class="w-3 h-3 text-stone-500" />
-              <span class="text-xs text-stone-500">
+              <.icon name="hero-eye" class="w-3 h-3 text-stone-500 dark:text-neutral-600" />
+
+              <span class="text-xs text-stone-500 dark:text-neutral-600">
                 {recording.views_count} • {Calendar.strftime(recording.date, "%d %b %Y")}
               </span>
             </div>
@@ -61,7 +62,7 @@
       </li>
     </ul>
     <.link href="/recordings">
-      <button class="flex items-center justify-center gap-1 border border-indigo-200 rounded-lg w-full text-indigo-800 text-sm font-medium hover:bg-indigo-50 h-[44px]">
+      <button class="flex items-center justify-center gap-1 border border-indigo-200 rounded-lg w-full text-indigo-800 text-sm font-medium hover:bg-indigo-50 h-[44px] dark:border-indigo-400 dark:text-indigo-400">
         Browse all <.icon name="hero-arrow-right" class="w-4 h-4" />
       </button>
     </.link>
