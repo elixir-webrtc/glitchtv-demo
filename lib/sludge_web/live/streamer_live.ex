@@ -30,10 +30,10 @@ defmodule SludgeWeb.StreamerLive do
     <div class="flex gap-4 h-full p-4">
       <div class="flex-grow flex flex-col">
         <form phx-submit="stream-config-update" class="flex items-start gap-2 mb-4">
-          <input type="text" name="title" placeholder="Title.." class="rounded-lg border-indigo-200" />
+          <input type="text" name="title" placeholder="Title..." class="rounded-lg border-indigo-200" />
           <textarea
             name="description"
-            placeholder="Description.."
+            placeholder="Description..."
             class="rounded-lg flex-1 resize-none border-indigo-200 self-stretch"
           />
 
