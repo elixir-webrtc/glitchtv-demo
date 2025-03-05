@@ -14,15 +14,18 @@ defmodule SludgeWeb.RecordingLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    if socket.assigns[:recording] do
-      {:noreply, socket}
-    else
-      {:noreply,
-       socket
-       |> assign(:page_title, page_title(socket.assigns.live_action))
-       |> assign(:recording, Recordings.get_and_increment_views!(id))}
-    end
-  end
+    recording =
+      if connected?(socket) do
+        Recordings.get_and_increment_views!(id)
+      else
+        Recordings.get_recording!(id)
+      end
 
-  defp page_title(:show), do: "Show Recording"
+    socket =
+      socket
+      |> assign(:page_title, recording.title)
+      |> assign(:recording, recording)
+
+    {:noreply, socket}
+  end
 end

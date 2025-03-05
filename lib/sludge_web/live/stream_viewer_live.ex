@@ -88,21 +88,11 @@ defmodule SludgeWeb.StreamViewerLive do
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}]
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter)
       )
+      |> assign(:page_title, "Stream")
+      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
       |> assign(:viewers_count, get_viewers_count())
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_params(_params, _, socket) do
-    {
-      :noreply,
-      socket
-      # XXX make it update pubsub or event or sth dont care really
-      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
-      # |> assign(:page_title, page_title(socket.assigns.live_action))
-      # |> assign(:recording, Recordings.get_recording!(id))}
-    }
   end
 
   @impl Phoenix.LiveView

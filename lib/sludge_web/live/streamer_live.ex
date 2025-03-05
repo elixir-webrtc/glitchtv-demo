@@ -79,20 +79,13 @@ defmodule SludgeWeb.StreamerLive do
         audio_codecs: @audio_codecs
       )
       |> assign(:form, %{"title" => "", "description" => ""} |> to_form())
+      |> assign(:page_title, "Streamer Panel")
       |> assign(:viewers_count, StreamViewerLive.get_viewers_count())
 
     {:ok, socket}
   end
 
   @impl true
-  def handle_params(_params, _, socket) do
-    {
-      :noreply,
-      socket
-      # |> assign(:page_title, page_title(socket.assigns.live_action))
-      # |> assign(:recording, Recordings.get_recording!(id))}
-    }
-  end
 
   @impl true
   def handle_event(
@@ -104,12 +97,6 @@ defmodule SludgeWeb.StreamerLive do
 
     {:noreply, socket}
   end
-
-  # @impl true
-  # def handle_event("validate", params, socket) do
-
-  #   {:noreply, socket}
-  # end
 
   defp on_connected("publisher") do
     Sludge.StreamService.stream_started()
@@ -130,6 +117,4 @@ defmodule SludgeWeb.StreamerLive do
   def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
     {:noreply, assign(socket, :viewers_count, StreamViewerLive.get_viewers_count())}
   end
-
-  # defp page_title(:show), do: "Show Recording"
 end
