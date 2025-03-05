@@ -1,12 +1,13 @@
 <div class="h-full flex gap-4">
   <div class="flex-grow flex flex-col gap-4">
-    <div class="flex-shrink w-full max-h-[480px]">
+    <div class="flex-shrink w-full max-h-[480px] relative">
       <video
         src={@recording.link}
         poster={@recording.thumbnail_link}
         controls
         class="object-contain w-full h-full bg-black"
       />
+      <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6" />
     </div>
     <div class="flex-grow flex flex-col gap-4 h-[0px]">
       <div class="flex gap-3 items-center justify-start">
