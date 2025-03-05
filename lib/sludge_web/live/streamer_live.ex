@@ -29,27 +29,27 @@ defmodule SludgeWeb.StreamerLive do
     ~H"""
     <div class="flex gap-4 h-full p-4">
       <div class="flex-grow flex flex-col justify-between">
-        <div class="flex-1 border border-indigo-200 rounded-lg mb-4">
+        <div class="flex-1 flex flex-col border border-indigo-200 rounded-lg mb-4">
           <div class="border-b border-indigo-200 px-8 py-4">
             <h1 class="font-medium">Stream details</h1>
           </div>
-          <form phx-submit="stream-config-update" class="flex items-stretch gap-1 flex-1 p-4">
-            <div class="flex flex-col gap-1 flex-1">
+          <form phx-submit="stream-config-update" class="flex flex-col items-stretch gap-2 flex-1 p-4">
+            <div class="flex gap-2">
               <input
                 type="text"
                 name="title"
                 placeholder="Title..."
-                class="rounded-lg border-indigo-200 text-sm"
+                class="rounded-lg border-indigo-200 text-sm flex-1"
               />
-              <textarea
-                name="description"
-                placeholder="Description..."
-                class="rounded-lg resize-none border-indigo-200 text-sm h-14"
-              />
+              <button class="rounded-lg bg-indigo-800 text-white py-3 px-16 text-sm hover:bg-indigo-900 self-start">
+                Save
+              </button>
             </div>
-            <button class="rounded-lg bg-indigo-800 text-white py-2 px-16 text-sm hover:bg-indigo-900">
-              Save
-            </button>
+            <textarea
+              name="description"
+              placeholder="Description..."
+              class="rounded-lg resize-none border-indigo-200 text-sm flex-1"
+            />
           </form>
         </div>
         <div class="flex items-stretch justify-stretch *:w-full">
