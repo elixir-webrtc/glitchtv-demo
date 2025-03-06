@@ -1,8 +1,9 @@
 defmodule SludgeWeb.StreamViewerLive do
   use SludgeWeb, :live_view
 
-  alias Phoenix.Socket.Broadcast
   alias LiveExWebRTC.Player
+  alias Phoenix.Presence
+  alias Phoenix.Socket.Broadcast
   alias SludgeWeb.ChatLive
   alias SludgeWeb.Presence
 
@@ -21,9 +22,12 @@ defmodule SludgeWeb.StreamViewerLive do
       )
 
     ~H"""
-    <div class="h-full flex gap-4 p-6">
+    <div class="h-full flex gap-4">
       <div class="flex-grow flex flex-col gap-4">
-        <Player.live_render socket={@socket} player={@player} />
+        <div class="relative">
+          <Player.live_render socket={@socket} player={@player} class="max-h-[440px] w-full" />
+          <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6" />
+        </div>
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
             <%= if @stream_metadata.streaming? do %>
@@ -49,9 +53,7 @@ defmodule SludgeWeb.StreamViewerLive do
                 {@viewers_count} viewers
               </span>
             </.dropping>
-            <button class="border border-indigo-200 text-indigo-800 font-medium rounded-lg px-6 py-3 flex gap-2 items-center">
-              Share <.icon name="hero-share" class="fill-indigo-800" />
-            </button>
+            <.share_button />
           </div>
           <p :if={@stream_metadata.streaming?} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
@@ -89,21 +91,11 @@ defmodule SludgeWeb.StreamViewerLive do
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}]
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter)
       )
+      |> assign(:page_title, "Stream")
+      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
       |> assign(:viewers_count, get_viewers_count())
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_params(_params, _, socket) do
-    {
-      :noreply,
-      socket
-      # XXX make it update pubsub or event or sth dont care really
-      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
-      # |> assign(:page_title, page_title(socket.assigns.live_action))
-      # |> assign(:recording, Recordings.get_recording!(id))}
-    }
   end
 
   @impl Phoenix.LiveView

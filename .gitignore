@@ -40,4 +40,5 @@ npm-debug.log
 *.db-*
 
 priv/static/content/
+priv/static/fonts
 /recordings/
