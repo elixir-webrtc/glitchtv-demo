@@ -9,20 +9,15 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def render(assigns) do
-    # TODO: Better logic for this
     assigns =
       assign(
         assigns,
         :start_difference,
-        if assigns.stream_metadata != nil do
-          {:ok, started_datetime} =
-            DateTime.from_naive(assigns.stream_metadata.started, "Etc/UTC")
-
-          {:ok, now_datetime} = DateTime.now("Etc/UTC")
-
-          DateTime.diff(now_datetime, started_datetime, :minute)
+        if assigns.stream_metadata[:started] != nil do
+          DateTime.utc_now()
+          |> DateTime.diff(assigns.stream_metadata.started, :minute)
         else
-          2
+          0
         end
       )
 
@@ -35,19 +30,23 @@ defmodule SludgeWeb.StreamViewerLive do
         </div>
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
-            <span :if={@stream_metadata}>
+            <%= if @stream_metadata.streaming? do %>
               <.live_dropping />
-            </span>
-            <h1 class="text-2xl line-clamp-2">
-              {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
+            <% end %>
+            <h1 class="text-2xl">
+              {@stream_metadata.title}
             </h1>
           </div>
-          <div :if={@stream_metadata} class="flex gap-4 text-sm h-[44px] items-stretch">
+          <div class="flex gap-4 text-sm">
             <.dropping>
-              Started:&nbsp;
-              <span class="text-indigo-800 font-medium">
-                {@start_difference} minutes ago
-              </span>
+              <%= if @stream_metadata.streaming? do %>
+                Started:&nbsp;
+                <span class="text-indigo-800 font-medium">
+                  {@start_difference} minutes ago
+                </span>
+              <% else %>
+                Stream is offline
+              <% end %>
             </.dropping>
             <.dropping>
               <span class="text-indigo-800 font-medium">
@@ -56,7 +55,7 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.share_button />
           </div>
-          <p :if={@stream_metadata} class="flex-grow overflow-y-scroll">
+          <p :if={@stream_metadata.streaming?} class="flex-grow overflow-y-scroll">
             {@stream_metadata.description}
           </p>
         </div>
@@ -79,8 +78,9 @@ defmodule SludgeWeb.StreamViewerLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
-      {:ok, _ref} = Presence.track(self(), "viewers", "count", %{})
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "stream_info:status")
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "stream_info:viewers")
+      {:ok, _ref} = Presence.track(self(), "stream_info:viewers", inspect(self()), %{})
     end
 
     socket =
@@ -99,14 +99,26 @@ defmodule SludgeWeb.StreamViewerLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+  def handle_info({:started, started}, socket) do
+    metadata = %{socket.assigns.stream_metadata | streaming?: true, started: started}
+    {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info({:changed, {title, description}}, socket) do
+    metadata = %{socket.assigns.stream_metadata | title: title, description: description}
+    {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info(:finished, socket) do
+    metadata = %{socket.assigns.stream_metadata | streaming?: false, started: nil}
+    {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info(%Broadcast{event: "presence_diff"}, socket) do
     {:noreply, assign(socket, :viewers_count, get_viewers_count())}
   end
 
   def get_viewers_count() do
-    case Presence.list("viewers") do
-      %{"count" => %{metas: list}} -> Enum.count(list)
-      _other -> 0
-    end
+    map_size(Presence.list("stream_info:viewers"))
   end
 end

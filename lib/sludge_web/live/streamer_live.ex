@@ -64,7 +64,7 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Sludge.PubSub, "viewers")
+      Phoenix.PubSub.subscribe(Sludge.PubSub, "stream_info:viewers")
     end
 
     socket =
@@ -113,7 +113,7 @@ defmodule SludgeWeb.StreamerLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+  def handle_info(%Broadcast{event: "presence_diff"}, socket) do
     {:noreply, assign(socket, :viewers_count, StreamViewerLive.get_viewers_count())}
   end
 end
