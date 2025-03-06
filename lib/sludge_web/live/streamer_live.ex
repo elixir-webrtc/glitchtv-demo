@@ -27,32 +27,33 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex">
-      <div>
-        <div class="text-[#606060] flex flex-col gap-6 py-2.5">
-          <.simple_form for={@form} phx-submit="stream-config-update">
-            <.input
-              type="textarea"
-              field={@form[:title]}
-              class="max-w-2xl rounded-lg h-12"
-              placeholder="Title"
-            />
-            <.input
-              type="textarea"
-              field={@form[:description]}
-              class="max-w-2xl rounded-lg h-40"
-              placeholder="Description"
-            />
-            <:actions>
-              <.button class="rounded-lg bg-brand/100 text-white py-2.5 max-w-36 hover:bg-brand/90">
+    <div class="flex gap-4 h-full">
+      <div class="flex-grow flex flex-col justify-between">
+        <div class="flex-1 flex flex-col border border-indigo-200 rounded-lg mb-4">
+          <div class="border-b border-indigo-200 px-8 py-4">
+            <h1 class="font-medium">Stream details</h1>
+          </div>
+          <form phx-submit="stream-config-update" class="flex flex-col items-stretch gap-2 flex-1 p-4">
+            <div class="flex gap-2">
+              <input
+                type="text"
+                name="title"
+                placeholder="Title..."
+                class="rounded-lg border-indigo-200 text-sm flex-1"
+              />
+              <button class="rounded-lg bg-indigo-800 text-white py-3 px-16 text-sm hover:bg-indigo-900 self-start">
                 Save
-              </.button>
-            </:actions>
-          </.simple_form>
+              </button>
+            </div>
+            <textarea
+              name="description"
+              placeholder="Description..."
+              class="rounded-lg resize-none border-indigo-200 text-sm flex-1"
+            />
+          </form>
         </div>
-        <Publisher.live_render socket={@socket} publisher={@publisher} />
-        <div>
-          {@viewers_count} viewers
+        <div class="flex items-stretch justify-stretch *:w-full">
+          <Publisher.live_render socket={@socket} publisher={@publisher} />
         </div>
       </div>
       <ChatLive.live_render socket={@socket} id="livechat" />
@@ -84,8 +85,6 @@ defmodule SludgeWeb.StreamerLive do
 
     {:ok, socket}
   end
-
-  @impl true
 
   @impl true
   def handle_event(

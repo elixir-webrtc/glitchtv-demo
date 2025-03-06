@@ -11,6 +11,7 @@ module.exports = {
     "../lib/sludge_web.ex",
     "../lib/sludge_web/**/*.*ex",
     "../deps/live_ex_webrtc/**/*.*ex",
+    "../../live_ex_webrtc/**/*.*ex",
   ],
   theme: {
     extend: {
