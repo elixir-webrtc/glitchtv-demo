@@ -27,7 +27,7 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex gap-4 h-full p-4">
+    <div class="flex gap-4 h-full">
       <div class="flex-grow flex flex-col justify-between">
         <div class="flex-1 flex flex-col border border-indigo-200 rounded-lg mb-4">
           <div class="border-b border-indigo-200 px-8 py-4">
@@ -85,8 +85,6 @@ defmodule SludgeWeb.StreamerLive do
 
     {:ok, socket}
   end
-
-  @impl true
 
   @impl true
   def handle_event(
