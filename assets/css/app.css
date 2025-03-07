@@ -18,3 +18,35 @@
     font-weight: 500;
     src: url('/fonts/Aeonik-Medium.otf')
 }
+
+.sludge-container-primary {
+    @apply flex flex-col border border-indigo-200 rounded-lg dark:border-zinc-800;
+}
+
+.sludge-recordings-container {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr justify-items-center gap-4;
+}
+
+.sludge-live-dropping-container {
+    @apply uppercase inline text-sm bg-red-600 p-1 px-2 text-xs text-white rounded-md font-medium tracking-[8%];
+}
+
+.sludge-dropping-featured-text {
+    @apply text-indigo-800 font-medium dark:text-neutral-200;
+}
+
+.sludge-input-primary {
+    @apply rounded-lg border border-indigo-200 text-sm flex-1 dark:bg-zinc-800 dark:border-none dark:text-indigo-400;
+}
+
+.sludge-button-primary {
+    @apply bg-indigo-800 text-white px-12 py-2 rounded-lg text-sm font-medium;
+}
+
+.sludge-button-browser-all {
+    @apply flex items-center justify-center gap-2 border border-indigo-200 rounded-lg w-full h-[44px] text-indigo-800 text-sm font-medium hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400;
+}
+
+.sludge-swm-video-watermark {
+    @apply absolute top-6 right-6 pointer-events-none;
+}

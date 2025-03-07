@@ -13,7 +13,7 @@ defmodule SludgeWeb.StreamViewerLive do
     <div class="h-full flex gap-4">
       <div class="flex-grow flex flex-col gap-4">
         <div class="relative">
-          <Player.live_render socket={@socket} player={@player} class="max-h-[502px] w-full" />
+          <Player.live_render socket={@socket} player={@player} class="max-h-[504px] w-full" />
           <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6 pointer-events-none" />
         </div>
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
@@ -29,15 +29,15 @@ defmodule SludgeWeb.StreamViewerLive do
             <.dropping>
               <%= if @stream_metadata.streaming? do %>
                 Started:&nbsp;
-                <span class="text-indigo-800 font-medium dark:text-neutral-200">
-                  {@stream_duration} minutes ago
+                <span class="sludge-dropping-featured-text">
+                  {@start_difference} minutes ago
                 </span>
               <% else %>
                 Stream is offline
               <% end %>
             </.dropping>
             <.dropping>
-              <span class="text-indigo-800 font-medium dark:text-neutral-200">
+              <span class="sludge-dropping-featured-text">
                 {@viewers_count} viewers
               </span>
             </.dropping>
@@ -60,7 +60,7 @@ defmodule SludgeWeb.StreamViewerLive do
 
   defp live_dropping(assigns) do
     ~H"""
-    <p class="uppercase inline text-sm bg-[#FF0011] p-1 px-2 text-xs text-white rounded-md font-medium tracking-[8%]">
+    <p class="sludge-live-dropping-container">
       live
     </p>
     """

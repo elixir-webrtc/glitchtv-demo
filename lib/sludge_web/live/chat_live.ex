@@ -13,7 +13,7 @@ defmodule SludgeWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-between border border-indigo-200 rounded-lg h-full dark:border-zinc-800">
+    <div class="sludge-container-primary h-full justify-between">
       <ul
         class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
         phx-hook="ScrollDownHook"
@@ -21,7 +21,7 @@ defmodule SludgeWeb.ChatLive do
         phx-update="stream"
       >
         <li :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col gap-1">
-          <p class="text-indigo-800 text-[13px] text-medium dark:text-indigo-400">
+          <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
             {msg.author}
           </p>
           <p class="dark:text-neutral-400">
@@ -35,7 +35,7 @@ defmodule SludgeWeb.ChatLive do
         class="flex flex-col gap-2 border-t border-indigo-200 p-6 dark:border-zinc-800"
       >
         <textarea
-          class="border border-indigo-200 rounded-lg resize-none h-[128px] text-[13px] dark:text-neutral-400 dark:bg-zinc-800 dark:border-none"
+          class="sludge-input-primary resize-none h-[128px] dark:text-neutral-400"
           placeholder="Your message"
           maxlength="500"
           name="body"
@@ -44,17 +44,14 @@ defmodule SludgeWeb.ChatLive do
         />
         <div class="flex gap-2">
           <input
-            class="flex-grow border border-indigo-200 rounded-lg px-4 text-[13px] dark:text-neutral-400 dark:bg-zinc-800 dark:border-none"
+            class="sludge-input-primary px-4 dark:text-neutral-400"
             placeholder="Your nickname"
             maxlength="25"
             name="author"
             value={@author}
             disabled={not is_nil(@author)}
           />
-          <button
-            type="submit"
-            class="bg-indigo-800 text-white px-12 py-2 rounded-lg text-[13px] font-medium"
-          >
+          <button type="submit" class="sludge-button-primary">
             <%= if is_nil(@author) do %>
               Join
             <% else %>
