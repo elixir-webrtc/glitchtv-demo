@@ -669,9 +669,15 @@ defmodule SludgeWeb.CoreComponents do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+
   def dropping(assigns) do
     ~H"""
-    <div class="bg-violet-50 px-4 py-3 rounded-lg flex items-center dark:bg-zinc-800 dark:text-neutral-400">
+    <div class={[
+      "bg-violet-50 px-4 py-3 rounded-lg flex items-center dark:bg-zinc-800 dark:text-neutral-400",
+      @class
+    ]}>
       {render_slot(@inner_block)}
     </div>
     """

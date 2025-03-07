@@ -28,15 +28,18 @@ defmodule SludgeWeb.StreamerLive do
   def render(assigns) do
     ~H"""
     <div class="flex gap-4 h-full">
-      <div class="flex-grow flex flex-col justify-between">
-        <div class="flex-1 flex flex-col border border-indigo-200 rounded-lg mb-4 dark:border-zinc-800">
-          <div class="border-b border-indigo-200 px-8 py-4 dark:border-zinc-800 flex justify-start items-center gap-6">
+      <div class="flex-grow flex flex-col justify-between gap-4">
+        <div class="flex-1 flex flex-col border border-indigo-200 rounded-lg dark:border-zinc-800">
+          <div class="border-b border-indigo-200 px-8 py-4 dark:border-zinc-800 flex justify-between items-center gap-4">
             <h1 class="font-medium dark:text-neutral-200">
               Stream details
             </h1>
-            <span class="text-sm">
-              ({@viewers_count} viewers)
-            </span>
+            <.dropping class="py-1">
+              <div class="flex items-center gap-2 text-sm">
+                <.icon name="hero-eye" class="w-4 h-4" />
+                {@viewers_count}
+              </div>
+            </.dropping>
           </div>
           <form phx-submit="stream-config-update" class="flex flex-col items-stretch gap-2 flex-1 p-4">
             <div class="flex gap-2">
