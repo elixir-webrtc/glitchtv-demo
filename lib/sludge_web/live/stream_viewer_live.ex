@@ -9,18 +9,6 @@ defmodule SludgeWeb.StreamViewerLive do
 
   @impl true
   def render(assigns) do
-    assigns =
-      assign(
-        assigns,
-        :start_difference,
-        if assigns.stream_metadata[:started] != nil do
-          DateTime.utc_now()
-          |> DateTime.diff(assigns.stream_metadata.started, :minute)
-        else
-          0
-        end
-      )
-
     ~H"""
     <div class="h-full flex gap-4">
       <div class="flex-grow flex flex-col gap-4">
@@ -42,7 +30,7 @@ defmodule SludgeWeb.StreamViewerLive do
               <%= if @stream_metadata.streaming? do %>
                 Started:&nbsp;
                 <span class="text-indigo-800 font-medium dark:text-neutral-200">
-                  {@start_difference} minutes ago
+                  {@stream_duration} minutes ago
                 </span>
               <% else %>
                 Stream is offline
@@ -97,6 +85,7 @@ defmodule SludgeWeb.StreamViewerLive do
       |> assign(:page_title, "Stream")
       |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
       |> assign(:viewers_count, get_viewers_count())
+      |> assign(:stream_duration, 0)
 
     {:ok, socket}
   end
@@ -115,6 +104,18 @@ defmodule SludgeWeb.StreamViewerLive do
   def handle_info(:finished, socket) do
     metadata = %{socket.assigns.stream_metadata | streaming?: false, started: nil}
     {:noreply, assign(socket, :stream_metadata, metadata)}
+  end
+
+  def handle_info(:tick, socket) do
+    socket =
+      socket
+      |> assign(
+        :stream_duration,
+        DateTime.utc_now()
+        |> DateTime.diff(socket.assigns.stream_metadata.started, :minute)
+      )
+
+    {:noreply, socket}
   end
 
   def handle_info(%Broadcast{event: "presence_diff"}, socket) do
