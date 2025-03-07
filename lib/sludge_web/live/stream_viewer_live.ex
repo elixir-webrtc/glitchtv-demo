@@ -14,7 +14,7 @@ defmodule SludgeWeb.StreamViewerLive do
       <div class="flex-grow flex flex-col gap-4">
         <div class="relative">
           <Player.live_render socket={@socket} player={@player} class="max-h-[502px] w-full" />
-          <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6" />
+          <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6 pointer-events-none" />
         </div>
         <div class="flex flex-col gap-4 flex-grow h-[0px]">
           <div class="flex gap-3 items-center justify-start">
