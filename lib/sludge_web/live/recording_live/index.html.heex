@@ -1,14 +1,16 @@
 <div class="flex flex-col gap-6">
   <div class="flex justify-between">
     <div class="relative">
-      <label class="absolute left-4 top-[13px] text-sm pointer-events-none">Sorted by:</label>
-      <select class="border rounded-lg border-indigo-200 text-indigo-800 text-sm pl-[82px] pr-8 py-3 font-medium dark:border-indigo-400 dark:text-indigo-400 bg-none">
+      <label class="absolute left-4 top-[13px] text-sm pointer-events-none dark:text-stone-200">
+        Sorted by:
+      </label>
+      <select class="border rounded-lg border-indigo-200 text-indigo-800 text-sm pl-[82px] pr-8 py-3 font-medium dark:border-indigo-400 dark:text-indigo-400 bg-none dark:bg-transparent">
         <option>Newest</option>
         <option>Oldest</option>
       </select>
       <.icon
         name="hero-chevron-down"
-        class="absolute right-2 top-[16px] w-4 h-4 text-indigo-800 pointer-events-none"
+        class="absolute right-2 top-[16px] w-4 h-4 text-indigo-800 pointer-events-none dark:text-indigo-400 "
       />
     </div>
     <.share_button />
