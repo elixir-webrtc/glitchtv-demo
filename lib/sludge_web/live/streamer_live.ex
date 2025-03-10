@@ -28,12 +28,10 @@ defmodule SludgeWeb.StreamerLive do
   def render(assigns) do
     ~H"""
     <div class="flex gap-4">
-      <div class="flex-grow-0 flex flex-col justify-start gap-4">
-        <div class="flex-grow-0 flex flex-col border border-indigo-200 rounded-lg dark:border-zinc-800">
+      <div class="flex flex-col justify-between gap-4">
+        <div class="sludge-container-primary flex-1">
           <div class="border-b border-indigo-200 px-8 py-2 flex justify-between items-center gap-4 dark:border-zinc-800">
-            <h1 class="font-medium dark:text-neutral-200">
-              Stream details
-            </h1>
+            <h1 class="font-medium dark:text-neutral-200">Stream details</h1>
             <.dropping class="py-1">
               <div class="flex items-center gap-2 text-xs">
                 <.icon name="hero-eye" class="w-4 h-4" />
@@ -43,20 +41,15 @@ defmodule SludgeWeb.StreamerLive do
           </div>
           <form phx-submit="stream-config-update" class="flex-1 flex flex-col items-stretch gap-2 p-4">
             <div class="flex gap-2">
-              <input
-                type="text"
-                name="title"
-                placeholder="Title..."
-                class="rounded-lg border-indigo-200 text-sm flex-1 dark:bg-zinc-800 dark:border-none dark:text-neutral-400"
-              />
-              <button class="rounded-lg bg-indigo-800 text-white py-3 px-16 text-sm hover:bg-indigo-900 self-start">
+              <input type="text" name="title" placeholder="Title..." class="sludge-input-primary" />
+              <button class="sludge-button-primary self-start">
                 Save
               </button>
             </div>
             <textarea
               name="description"
               placeholder="Description..."
-              class="flex-1 rounded-lg resize-none border-indigo-200 text-sm dark:bg-zinc-800 dark:border-none dark:text-neutral-400"
+              class="sludge-input-primary resize-none"
             />
           </form>
         </div>
