@@ -4,7 +4,7 @@ defmodule Sludge.RecordingsService do
   use GenServer
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__,  args, name: __MODULE__)
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
   def recording_complete(manifest, metadata) do
@@ -26,15 +26,23 @@ defmodule Sludge.RecordingsService do
   def handle_call({:recording_complete, manifest, metadata}, _from, state) do
     # XXX SHOULD RECORDER EXPAND PATHS?
     # XXX MAYBE ADD OPTION PATH_PREFIX OR SOME SUCH?
-    result_manifest = ExWebRTC.Recorder.Converter.convert!(manifest,
-      thumbnails_ctx: %{},
-      output_path: "./priv/static/content/"
-    )
-    |> Map.values()
-    |> List.first()
+    result_manifest =
+      ExWebRTC.Recorder.Converter.convert!(manifest,
+        thumbnails_ctx: %{},
+        output_path: "./priv/static/content/"
+      )
+      |> Map.values()
+      |> List.first()
 
-    title = if metadata.title == "", do: "Untitled recording", else: metadata.title
-    description = if metadata.description == "", do: "No description provided", else: metadata.description
+    title =
+      if metadata.title == nil or metadata.title == "",
+        do: "Untitled recording",
+        else: metadata.title
+
+    description =
+      if metadata.description == nil or metadata.description == "",
+        do: "No description provided",
+        else: metadata.description
 
     {:ok, _} =
       Sludge.Recordings.create_recording(%{
