@@ -29,7 +29,8 @@ defmodule Sludge.StreamService do
       streaming?: false,
       title: nil,
       description: nil,
-      started: nil
+      started: nil,
+      timer_ref: nil
     }
 
     {:ok, state}
@@ -62,10 +63,10 @@ defmodule Sludge.StreamService do
 
   @impl true
   def handle_call(:stream_started, _from, state) do
-    state = %{state | streaming?: true, started: DateTime.utc_now()}
-
     Phoenix.PubSub.broadcast(Sludge.PubSub, "stream_info:status", {:started, state.started})
+    {:ok, timer_ref} = :timer.send_interval(60_000, self(), :tick)
 
+    state = %{state | streaming?: true, started: DateTime.utc_now(), timer_ref: timer_ref}
     {:reply, :ok, state}
   end
 
@@ -73,6 +74,13 @@ defmodule Sludge.StreamService do
   def handle_call(:stream_ended, _from, state) do
     state = %{state | streaming?: false, started: nil}
     Phoenix.PubSub.broadcast(Sludge.PubSub, "stream_info:status", :finished)
+    :timer.cancel(state.timer_ref)
     {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_info(:tick, state) do
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "stream_info:status", :tick)
+    {:noreply, state}
   end
 end
