@@ -117,7 +117,7 @@ defmodule SludgeWeb.ChatLive do
   end
 
   defp send_message(body, author, id) do
-    msg = %{author: author, body: body, id: "#{author}:#{id}"}
+    msg = %{author: author, body: body, id: "#{author}:#{id}", timestamp: DateTime.now("Etc/UTC")}
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end
