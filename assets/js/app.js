@@ -24,11 +24,13 @@ import topbar from "../vendor/topbar"
 import { createPublisherHook, createPlayerHook } from "live_ex_webrtc";
 import ScrollDownHook from "./ScrollDownHook";
 import ShareButtonHook from "./ShareButtonHook";
+import DarkModeToggleHook from "./DarkModeToggleHook";
 
 let Hooks = {};
 
 Hooks.ScrollDownHook = ScrollDownHook;
 Hooks.ShareButton = ShareButtonHook;
+Hooks.DarkModeToggleHook = DarkModeToggleHook;
 
 const iceServers = [{ urls: "stun:stun.l.google.com:19302" }];
 Hooks.Publisher = createPublisherHook(iceServers);
