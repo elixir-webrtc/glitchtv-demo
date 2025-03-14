@@ -25,7 +25,7 @@ defmodule SludgeWeb.ChatLive do
             <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
               {msg.author}
             </p>
-            <p class="text-xs dark:text-neutral-500">
+            <p class="text-xs text-neutral-500">
               {Calendar.strftime(msg.timestamp, "%d %b %Y %H:%M:%S")}
             </p>
           </div>
