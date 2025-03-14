@@ -1,4 +1,4 @@
-<div class="h-full flex gap-4">
+<div class="h-full flex gap-8">
   <div class="flex-grow flex flex-col gap-4">
     <div class="flex-shrink w-full max-h-[440px] relative">
       <video
@@ -11,11 +11,11 @@
     </div>
     <div class="flex-grow flex flex-col gap-4 h-[0px]">
       <div class="flex gap-3 items-center justify-start">
-        <h1 class="text-2xl line-clamp-2 dark:text-neutral-200 break-all">
+        <h1 class="text-xl line-clamp-2 dark:text-neutral-200 break-all">
           {@recording.title}
         </h1>
       </div>
-      <div class="flex gap-4 text-sm h-[44px] items-stretch">
+      <div class="flex gap-4">
         <.dropping>
           Recorded:&nbsp;
           <span class="sludge-dropping-featured-text">
@@ -30,7 +30,7 @@
         </.dropping>
         <.share_button />
       </div>
-      <p class="overflow-y-scroll dark:text-neutral-400 break-all">
+      <p class="overflow-y-scroll text-sm dark:text-neutral-400 break-all">
         {@recording.description}
       </p>
     </div>
