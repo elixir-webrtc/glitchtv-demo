@@ -41,7 +41,14 @@ defmodule SludgeWeb.StreamerLive do
           </div>
           <form phx-submit="stream-config-update" class="flex-1 flex flex-col items-stretch gap-2 p-4">
             <div class="flex gap-2">
-              <input type="text" name="title" placeholder="Title..." class="sludge-input-primary" />
+              <input
+                type="text"
+                name="title"
+                value={@form_data.title}
+                placeholder="Title..."
+                class="sludge-input-primary"
+                phx-change="validate-title"
+              />
               <button class="sludge-button-primary self-start">
                 Save
               </button>
@@ -50,7 +57,8 @@ defmodule SludgeWeb.StreamerLive do
               name="description"
               placeholder="Description..."
               class="sludge-input-primary resize-none"
-            />
+              phx-change="validate-description"
+            >{@form_data.description}</textarea>
           </form>
         </div>
         <div class="flex items-stretch justify-stretch *:w-full">
@@ -80,7 +88,7 @@ defmodule SludgeWeb.StreamerLive do
         video_codecs: @video_codecs,
         audio_codecs: @audio_codecs
       )
-      |> assign(:form, %{"title" => "", "description" => ""} |> to_form())
+      |> assign(:form_data, %{:title => "", :description => ""})
       |> assign(:page_title, "Streamer Panel")
       |> assign(:viewers_count, StreamViewerLive.get_viewers_count())
 
@@ -95,6 +103,30 @@ defmodule SludgeWeb.StreamerLive do
         socket
       ) do
     Sludge.StreamService.put_stream_metadata(%{title: title, description: description})
+
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "validate-title",
+        %{"title" => title},
+        socket
+      ) do
+    socket =
+      socket
+      |> assign(:form_data, %{socket.assigns.form_data | :title => title})
+
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "validate-description",
+        %{"description" => description},
+        socket
+      ) do
+    socket =
+      socket
+      |> assign(:form_data, %{socket.assigns.form_data | :description => description})
 
     {:noreply, socket}
   end

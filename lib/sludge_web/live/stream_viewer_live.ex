@@ -43,10 +43,7 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.share_button />
           </div>
-          <p
-            :if={@stream_metadata.streaming?}
-            class="flex-grow overflow-y-scroll dark:text-neutral-400"
-          >
+          <p class="flex-grow overflow-y-scroll dark:text-neutral-400">
             {@stream_metadata.description}
           </p>
         </div>
