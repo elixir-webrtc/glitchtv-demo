@@ -1,23 +1,21 @@
-<div class="max-h-full flex gap-4">
-  <div class="flex flex-col gap-4 justify-stretch w-full">
-    <div class="flex-grow relative min-h-[0px] max-h-fit">
-      <div class="h-full *:flex *:max-h-full *:w-full *:h-full">
-        <video
-          src={@recording.link}
-          poster={@recording.thumbnail_link}
-          controls
-          class="w-full h-full bg-black rounded-lg"
-        />
-      </div>
-      <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6 pointer-events-none" />
+<div class="h-full flex gap-8">
+  <div class="flex-grow flex flex-col gap-4">
+    <div class="flex-shrink w-full max-h-[440px] relative">
+      <video
+        src={@recording.link}
+        poster={@recording.thumbnail_link}
+        controls
+        class="object-contain w-full h-full bg-black rounded-lg"
+      />
+      <img src="/images/swm-white-logo.svg" class="sludge-swm-video-watermark" />
     </div>
     <div class="flex flex-col gap-4 flex-shrink">
       <div class="flex gap-3 items-center justify-start">
-        <h1 class="text-2xl line-clamp-2 dark:text-neutral-200 break-all">
+        <h1 class="text-xl line-clamp-2 dark:text-neutral-200 break-all">
           {@recording.title}
         </h1>
       </div>
-      <div class="flex gap-4 text-sm">
+      <div class="flex gap-4">
         <.dropping>
           Recorded:&nbsp;
           <span class="sludge-dropping-featured-text">
@@ -32,7 +30,7 @@
         </.dropping>
         <.share_button />
       </div>
-      <p class="flex-shrink overflow-y-scroll dark:text-neutral-400 break-all min-h-8 h-32">
+      <p class="overflow-y-scroll text-sm dark:text-neutral-400 break-all">
         {@recording.description}
       </p>
     </div>
