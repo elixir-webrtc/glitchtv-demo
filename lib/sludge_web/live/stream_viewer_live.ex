@@ -30,7 +30,7 @@ defmodule SludgeWeb.StreamViewerLive do
               <%= if @stream_metadata.streaming? do %>
                 Started:&nbsp;
                 <span class="sludge-dropping-featured-text">
-                  {@start_difference} minutes ago
+                  {@stream_duration} minutes ago
                 </span>
               <% else %>
                 Stream is offline
