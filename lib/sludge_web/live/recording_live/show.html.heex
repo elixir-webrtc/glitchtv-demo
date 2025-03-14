@@ -11,7 +11,7 @@
     </div>
     <div class="flex-grow flex flex-col gap-4 h-[0px]">
       <div class="flex gap-3 items-center justify-start">
-        <h1 class="text-2xl line-clamp-2 dark:text-neutral-200">
+        <h1 class="text-2xl line-clamp-2 dark:text-neutral-200 break-all">
           {@recording.title}
         </h1>
       </div>
@@ -30,7 +30,7 @@
         </.dropping>
         <.share_button />
       </div>
-      <p class="overflow-y-scroll dark:text-neutral-400">
+      <p class="overflow-y-scroll dark:text-neutral-400 break-all">
         {@recording.description}
       </p>
     </div>
@@ -47,7 +47,7 @@
             class="h-[64px] lg:h-[80px] rounded-lg object-contain"
           />
           <div class="flex flex-col justify-between py-2">
-            <p class="text-sm line-clamp-3 dark:text-neutral-200">
+            <p class="text-sm line-clamp-3 dark:text-neutral-200 break-all">
               {recording.title}
             </p>
             <div class="flex items-center gap-1">
