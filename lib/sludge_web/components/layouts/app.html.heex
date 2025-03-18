@@ -19,27 +19,53 @@
         />
       </a>
     </div>
-    <ul class="flex items-center gap-12 text-lg text-indigo-800 dark:text-neutral-200">
-      <li>
-        <a href="/">Stream</a>
-      </li>
-      <li>
-        <a href="/recordings">Recordings</a>
-      </li>
-      <li>
-        <a href="https://hexdocs.pm/ex_webrtc" target="blank">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/elixir-webrtc/twitch-clone-demo" target="blank">
-          <img src="/images/github-logo.svg" class="dark:hidden" alt="Github logo" />
-          <img
-            src="/images/github-dark-mode-logo.svg"
-            class="hidden dark:block"
-            alt="Github logo"
+    <div class="flex gap-16">
+      <ul class="flex items-center gap-12 text-lg text-indigo-800 dark:text-neutral-200">
+        <li>
+          <a href="/">Stream</a>
+        </li>
+        <li>
+          <a href="/recordings">Recordings</a>
+        </li>
+        <li>
+          <a href="https://hexdocs.pm/ex_webrtc" target="blank">Docs</a>
+        </li>
+        <li>
+          <a href="https://github.com/elixir-webrtc/twitch-clone-demo" target="blank">
+            <img src="/images/github-logo.svg" class="dark:hidden" alt="Github logo" />
+            <img
+              src="/images/github-dark-mode-logo.svg"
+              class="hidden dark:block"
+              alt="Github logo"
+            />
+          </a>
+        </li>
+      </ul>
+      <div class="flex gap-2 items-center">
+        <label
+          for="toggle-dark-mode"
+          class="text-xs text-nowrap text-indigo-800 dark:text-neutral-200"
+        >
+          <.icon name="hero-sun" class="w-5 h-5" />
+        </label>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            class="sr-only peer appearance-none"
+            id="toggle-dark-mode"
+            phx-hook="DarkModeToggleHook"
           />
-        </a>
-      </li>
-    </ul>
+          <div class="w-10 h-5 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500 peer-disabled:opacity-50">
+          </div>
+        </label>
+        <label
+          for="toggle-dark-mode"
+          class="text-xs text-nowrap text-indigo-800 dark:text-neutral-200"
+        >
+          <.icon name="hero-moon" class="w-5 h-5" />
+        </label>
+      </div>
+    </div>
   </header>
   <main class="p-4 sm:p-6 sm:pt-4 lg:p-8 lg:pt-6 mx-auto w-full max-w-[1376px] flex-grow">
     <.flash_group flash={@flash} />

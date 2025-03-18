@@ -19,6 +19,28 @@
     src: url('/fonts/Aeonik-Medium.otf')
 }
 
+/* https://stackoverflow.com/questions/77936984/scrollbar-with-white-background */
+
+*::-webkit-scrollbar {
+    width: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: auto;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+    background-color: rgb(255, 255, 255, 0.5);
+    border-radius: 4px;
+}
+
+/*  */
+
 .sludge-container-primary {
     @apply flex flex-col border border-indigo-200 rounded-lg dark:border-zinc-800;
 }
@@ -44,7 +66,7 @@
 }
 
 .sludge-button-browser-all {
-    @apply flex items-center justify-center gap-2 border border-indigo-200 rounded-lg w-full h-[44px] text-indigo-800 text-sm font-medium hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400;
+    @apply flex items-center justify-center gap-2 border border-indigo-200 rounded-lg w-full h-[44px] text-indigo-800 text-sm font-medium hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-stone-800;
 }
 
 .sludge-swm-video-watermark {
