@@ -42,15 +42,16 @@ defmodule SludgeWeb.ChatLive do
         <div class="flex items-end gap-2 relative">
           <textarea
             name="body"
-            class="sludge-input-primary resize-none h-[128px] dark:text-neutral-400"
+            class="sludge-input-primary resize-none h-[128px] dark:text-neutral-400 disabled:opacity-50"
             placeholder="Your message"
             maxlength="500"
             disabled={is_nil(@author)}
           >{@msg_body}</textarea>
           <button
             type="button"
-            class="border border-indigo-200 rounded-lg px-2 py-1"
+            class="border border-indigo-200 rounded-lg px-2 py-1 disabled:opacity-50"
             phx-click="toggle-emoji-overlay"
+            disabled={is_nil(@author)}
           >
             <.icon name="hero-face-smile" />
           </button>
