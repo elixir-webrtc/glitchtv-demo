@@ -47,7 +47,7 @@ defmodule SludgeWeb.StreamerLive do
                 value={@form_data.title}
                 placeholder="Title..."
                 class="sludge-input-primary"
-                phx-change="validate-title"
+                phx-change="update-title"
               />
               <button class="sludge-button-primary self-start">
                 Save
@@ -57,7 +57,7 @@ defmodule SludgeWeb.StreamerLive do
               name="description"
               placeholder="Description..."
               class="sludge-input-primary resize-none"
-              phx-change="validate-description"
+              phx-change="update-description"
             >{@form_data.description}</textarea>
           </form>
         </div>
@@ -88,7 +88,7 @@ defmodule SludgeWeb.StreamerLive do
         video_codecs: @video_codecs,
         audio_codecs: @audio_codecs
       )
-      |> assign(:form_data, %{:title => "", :description => ""})
+      |> assign(:form_data, %{title: "", description: ""})
       |> assign(:page_title, "Streamer Panel")
       |> assign(:viewers_count, StreamViewerLive.get_viewers_count())
 
@@ -108,25 +108,25 @@ defmodule SludgeWeb.StreamerLive do
   end
 
   def handle_event(
-        "validate-title",
+        "update-title",
         %{"title" => title},
         socket
       ) do
     socket =
       socket
-      |> assign(:form_data, %{socket.assigns.form_data | :title => title})
+      |> assign(:form_data, %{socket.assigns.form_data | title: title})
 
     {:noreply, socket}
   end
 
   def handle_event(
-        "validate-description",
+        "update-description",
         %{"description" => description},
         socket
       ) do
     socket =
       socket
-      |> assign(:form_data, %{socket.assigns.form_data | :description => description})
+      |> assign(:form_data, %{socket.assigns.form_data | description: description})
 
     {:noreply, socket}
   end
