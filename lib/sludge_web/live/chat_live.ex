@@ -15,7 +15,7 @@ defmodule SludgeWeb.ChatLive do
     ~H"""
     <div class="sludge-container-primary h-full justify-between">
       <ul
-        class="w-[448px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
+        class="w-[440px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
         phx-hook="ScrollDownHook"
         id="message_box"
         phx-update="stream"
