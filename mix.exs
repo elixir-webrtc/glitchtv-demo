@@ -55,14 +55,12 @@ defmodule Sludge.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-
       {:ex_webrtc, github: "elixir-webrtc/ex_webrtc", override: true},
       {:ex_webrtc_recorder, github: "elixir-webrtc/ex_webrtc_recorder", override: true},
       {:live_ex_webrtc, github: "elixir-webrtc/live_ex_webrtc"},
-
       {:ex_aws, ">=0.0.0"},
       {:ex_aws_s3, ">=0.0.0"},
-      {:sweet_xml, ">=0.0.0"},
+      {:sweet_xml, ">=0.0.0"}
     ]
   end
 

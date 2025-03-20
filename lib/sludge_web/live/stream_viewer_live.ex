@@ -74,6 +74,8 @@ defmodule SludgeWeb.StreamViewerLive do
       {:ok, _ref} = Presence.track(self(), "stream_info:viewers", inspect(self()), %{})
     end
 
+    metadata = Sludge.StreamService.get_stream_metadata()
+
     socket =
       Player.attach(socket,
         id: "player",
@@ -83,9 +85,9 @@ defmodule SludgeWeb.StreamViewerLive do
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter)
       )
       |> assign(:page_title, "Stream")
-      |> assign(:stream_metadata, Sludge.StreamService.get_stream_metadata())
+      |> assign(:stream_metadata, metadata)
       |> assign(:viewers_count, get_viewers_count())
-      |> assign(:stream_duration, 0)
+      |> assign(:stream_duration, measure_duration(metadata.started))
 
     {:ok, socket}
   end
@@ -111,8 +113,7 @@ defmodule SludgeWeb.StreamViewerLive do
       socket
       |> assign(
         :stream_duration,
-        DateTime.utc_now()
-        |> DateTime.diff(socket.assigns.stream_metadata.started, :minute)
+        measure_duration(socket.assigns.stream_metadata.started)
       )
 
     {:noreply, socket}
@@ -124,5 +125,16 @@ defmodule SludgeWeb.StreamViewerLive do
 
   def get_viewers_count() do
     map_size(Presence.list("stream_info:viewers"))
+  end
+
+  defp measure_duration(started_timestamp) do
+    case started_timestamp do
+      nil ->
+        0
+
+      t ->
+        DateTime.utc_now()
+        |> DateTime.diff(t, :minute)
+    end
   end
 end
