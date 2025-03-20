@@ -11,12 +11,15 @@ defmodule SludgeWeb.StreamViewerLive do
   def render(assigns) do
     ~H"""
     <div class="h-full flex gap-4">
-      <div class="flex-grow flex flex-col gap-4">
-        <div class="relative">
-          <Player.live_render socket={@socket} player={@player} class="max-h-[504px] w-full" />
+      <div class="flex flex-col gap-4 justify-stretch w-full">
+        <div class="flex-grow relative min-h-[0px] max-h-fit">
+          <%!-- <div class="h-full *:max-h-full *:flex *:items-stretch *:justify-stretch *:h-full *:w-full"> --%>
+          <div class="h-full *:flex *:max-h-full *:w-full *:h-full">
+            <Player.live_render socket={@socket} player={@player} class="w-full" />
+          </div>
           <img src="/images/swm-white-logo.svg" class="absolute top-6 right-6 pointer-events-none" />
         </div>
-        <div class="flex flex-col gap-4 flex-grow h-[0px]">
+        <div class="flex flex-col gap-4 flex-grow">
           <div class="flex gap-3 items-center justify-start">
             <%= if @stream_metadata.streaming? do %>
               <.live_dropping />
@@ -43,7 +46,7 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.share_button />
           </div>
-          <p class="flex-grow overflow-y-scroll dark:text-neutral-400 break-all">
+          <p class="flex-grow overflow-y-scroll dark:text-neutral-400 break-all h-8 max-h-32">
             {@stream_metadata.description}
           </p>
         </div>
