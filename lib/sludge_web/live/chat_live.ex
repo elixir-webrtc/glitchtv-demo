@@ -21,9 +21,14 @@ defmodule SludgeWeb.ChatLive do
         phx-update="stream"
       >
         <li :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col gap-1">
-          <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
-            {msg.author}
-          </p>
+          <div class="flex gap-4 justify-between items-center">
+            <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
+              {msg.author}
+            </p>
+            <p class="text-xs text-neutral-500">
+              {Calendar.strftime(msg.timestamp, "%d %b %Y %H:%M:%S")}
+            </p>
+          </div>
           <p class="dark:text-neutral-400">
             {msg.body}
           </p>
@@ -117,7 +122,8 @@ defmodule SludgeWeb.ChatLive do
   end
 
   defp send_message(body, author, id) do
-    msg = %{author: author, body: body, id: "#{author}:#{id}"}
+    {:ok, timestamp} = DateTime.now("Etc/UTC")
+    msg = %{author: author, body: body, id: "#{author}:#{id}", timestamp: timestamp}
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end

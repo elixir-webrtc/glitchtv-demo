@@ -21,7 +21,7 @@ defmodule SludgeWeb.StreamViewerLive do
             <%= if @stream_metadata.streaming? do %>
               <.live_dropping />
             <% end %>
-            <h1 class="text-2xl line-clamp-2 dark:text-neutral-200">
+            <h1 class="text-2xl line-clamp-2 dark:text-neutral-200 break-all">
               {if @stream_metadata, do: @stream_metadata.title, else: "The stream is offline"}
             </h1>
           </div>
@@ -43,7 +43,10 @@ defmodule SludgeWeb.StreamViewerLive do
             </.dropping>
             <.share_button />
           </div>
-          <p class="flex-grow overflow-y-scroll dark:text-neutral-400">
+          <p
+            :if={@stream_metadata.streaming?}
+            class="flex-grow overflow-y-scroll dark:text-neutral-400 break-all"
+          >
             {@stream_metadata.description}
           </p>
         </div>

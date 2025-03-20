@@ -8,7 +8,7 @@ defmodule Sludge.RecordingsService do
   end
 
   def recording_complete(manifest, metadata) do
-    GenServer.call(__MODULE__, {:recording_complete, manifest, metadata})
+    GenServer.cast(__MODULE__, {:recording_complete, manifest, metadata})
   end
 
   @impl true
@@ -23,7 +23,7 @@ defmodule Sludge.RecordingsService do
   end
 
   @impl true
-  def handle_call({:recording_complete, manifest, metadata}, _from, state) do
+  def handle_cast({:recording_complete, manifest, metadata}, state) do
     # XXX SHOULD RECORDER EXPAND PATHS?
     # XXX MAYBE ADD OPTION PATH_PREFIX OR SOME SUCH?
     result_manifest =
@@ -55,15 +55,12 @@ defmodule Sludge.RecordingsService do
         views_count: 0
       })
 
-    {:reply, :ok, state}
+    {:noreply, state}
   end
 
   defp rewrite_location(location, state) do
     "/#{Path.relative_to(location, state.assets_path)}"
   end
-
-  # JEST I SIE POJAWIŁO, ale nie ma autorefresh
-  #     a może jest? chyba jednak jest z marszu
 
   # @impl true
   # def handle_info({:ex_webrtc_recorder, _pid, {upload_result, ref, manifest}}, state) do
