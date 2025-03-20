@@ -13,7 +13,6 @@ defmodule SludgeWeb.StreamViewerLive do
     <div class="max-h-full flex gap-4">
       <div class="flex flex-col gap-4 justify-stretch w-full">
         <div class="flex-grow relative min-h-[0px] max-h-fit">
-          <%!-- <div class="h-full *:max-h-full *:flex *:items-stretch *:justify-stretch *:h-full *:w-full"> --%>
           <div class="h-full *:flex *:max-h-full *:w-full *:h-full">
             <Player.live_render socket={@socket} player={@player} class="w-full" />
           </div>
