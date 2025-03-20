@@ -1,5 +1,5 @@
 defmodule SludgeWeb.ChatLive do
-  use Phoenix.LiveView
+  use SludgeWeb, :live_view
 
   attr(:socket, Phoenix.LiveView.Socket, required: true, doc: "Parent live view socket")
   attr(:id, :string, required: true, doc: "Component id")
@@ -15,12 +15,19 @@ defmodule SludgeWeb.ChatLive do
     ~H"""
     <div class="sludge-container-primary h-full justify-between">
       <ul
-        class="w-[440px] h-[0px] overflow-y-scroll flex-grow flex flex-col gap-6 p-6"
+        class="w-[440px] h-[0px] overflow-y-auto flex-grow flex flex-col"
         phx-hook="ScrollDownHook"
         id="message_box"
         phx-update="stream"
       >
-        <li :for={{id, msg} <- @streams.messages} id={id} class="flex flex-col gap-1">
+        <li
+          :for={{id, msg} <- @streams.messages}
+          id={id}
+          class={[
+            "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative",
+            msg.flagged && "bg-red-50"
+          ]}
+        >
           <div class="flex gap-4 justify-between items-center">
             <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
               {msg.author}
@@ -32,6 +39,13 @@ defmodule SludgeWeb.ChatLive do
           <p class="dark:text-neutral-400">
             {msg.body}
           </p>
+          <button
+            class="absolute right-6 bottom-2 rounded-full hover:bg-stone-200 flex items-center justify-center p-2"
+            phx-click="flag-message"
+            phx-value-message-id={msg.id}
+          >
+            <.icon name="hero-flag" class="w-4 h-4 text-red-400" />
+          </button>
         </li>
       </ul>
       <form
@@ -75,9 +89,26 @@ defmodule SludgeWeb.ChatLive do
       subscribe()
     end
 
+    {:ok, timestamp} = DateTime.now("Etc/UTC")
+
     socket =
       socket
-      |> stream(:messages, [])
+      |> stream(:messages, [
+        %{
+          author: "Jan",
+          body: "Hello, world",
+          id: "Jan:Hello, world",
+          timestamp: timestamp,
+          flagged: false
+        },
+        %{
+          author: "Zbigniew",
+          body: "Hello, world",
+          id: "Zbigniew:Hello, world",
+          timestamp: timestamp,
+          flagged: false
+        }
+      ])
       |> assign(msg_body: nil, author: nil, next_msg_id: 0)
 
     {:ok, socket}
@@ -117,13 +148,43 @@ defmodule SludgeWeb.ChatLive do
     {:noreply, assign(socket, author: author)}
   end
 
+  def handle_event("flag-message", %{"message-id" => message_id}, socket) do
+    # index =
+    #   socket.assigns.streams.messages
+    #   |> Enum.find_index(fn {_, message} -> message.id == message_id end)
+
+    # message =
+    #   socket.assigns.streams.messages
+    #   |> Enum.find(fn {_, message} -> message.id == message_id end)
+
+    # socket =
+    #   socket
+    #   |> stream_insert(
+    #     :messages,
+    #     Map.put(message, :flagged, true),
+    #     at: index
+    #   )
+
+    dbg("wtf")
+
+    {:noreply, socket}
+  end
+
   defp subscribe() do
     Phoenix.PubSub.subscribe(Sludge.PubSub, "chatroom")
   end
 
   defp send_message(body, author, id) do
     {:ok, timestamp} = DateTime.now("Etc/UTC")
-    msg = %{author: author, body: body, id: "#{author}:#{id}", timestamp: timestamp}
+
+    msg = %{
+      author: author,
+      body: body,
+      id: "#{author}:#{id}",
+      timestamp: timestamp,
+      flagged: false
+    }
+
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:new_msg, msg})
   end
 end
