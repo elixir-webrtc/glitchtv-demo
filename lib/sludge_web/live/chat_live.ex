@@ -21,11 +21,11 @@ defmodule SludgeWeb.ChatLive do
         phx-update="stream"
       >
         <li
-          :for={{id, msg} <- @streams.messages}
-          id={id}
+          :for={msg <- @messages}
+          id={msg.id}
           class={[
             "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative",
-            msg.flagged && "bg-red-50"
+            msg.flagged && "bg-red-100 hover:bg-red-200"
           ]}
         >
           <div class="flex gap-4 justify-between items-center">
@@ -40,7 +40,10 @@ defmodule SludgeWeb.ChatLive do
             {msg.body}
           </p>
           <button
-            class="absolute right-6 bottom-2 rounded-full hover:bg-stone-200 flex items-center justify-center p-2"
+            class={[
+              "absolute right-6 bottom-2 rounded-full hover:bg-stone-200 flex items-center justify-center p-2",
+              msg.flagged && "hover:bg-red-300"
+            ]}
             phx-click="flag-message"
             phx-value-message-id={msg.id}
           >
@@ -93,7 +96,7 @@ defmodule SludgeWeb.ChatLive do
 
     socket =
       socket
-      |> stream(:messages, [
+      |> assign(:messages, [
         %{
           author: "Jan",
           body: "Hello, world",
@@ -116,7 +119,26 @@ defmodule SludgeWeb.ChatLive do
 
   @impl true
   def handle_info({:new_msg, msg}, socket) do
-    {:noreply, stream(socket, :messages, [msg])}
+    {:noreply, assign(socket, :messages, [msg])}
+  end
+
+  @impl true
+  def handle_info({:msg_flagged, flagged_message_id}, socket) do
+    messages =
+      socket.assigns.messages
+      |> Enum.map(fn message ->
+        if message.id == flagged_message_id do
+          Map.put(message, :flagged, !message.flagged)
+        else
+          message
+        end
+      end)
+
+    socket =
+      socket
+      |> assign(:messages, messages)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -148,24 +170,8 @@ defmodule SludgeWeb.ChatLive do
     {:noreply, assign(socket, author: author)}
   end
 
-  def handle_event("flag-message", %{"message-id" => message_id}, socket) do
-    # index =
-    #   socket.assigns.streams.messages
-    #   |> Enum.find_index(fn {_, message} -> message.id == message_id end)
-
-    # message =
-    #   socket.assigns.streams.messages
-    #   |> Enum.find(fn {_, message} -> message.id == message_id end)
-
-    # socket =
-    #   socket
-    #   |> stream_insert(
-    #     :messages,
-    #     Map.put(message, :flagged, true),
-    #     at: index
-    #   )
-
-    dbg("wtf")
+  def handle_event("flag-message", %{"message-id" => flagged_message_id}, socket) do
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:msg_flagged, flagged_message_id})
 
     {:noreply, socket}
   end
