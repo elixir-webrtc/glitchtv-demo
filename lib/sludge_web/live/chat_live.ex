@@ -2,27 +2,67 @@ defmodule SludgeWeb.ChatLive do
   use SludgeWeb, :live_view
 
   attr(:socket, Phoenix.LiveView.Socket, required: true, doc: "Parent live view socket")
+  attr(:role, :string, required: true, doc: "Admin or user")
   attr(:id, :string, required: true, doc: "Component id")
 
   def live_render(assigns) do
     ~H"""
-    {live_render(@socket, __MODULE__, id: @id)}
+    {live_render(@socket, __MODULE__, id: @id, session: %{"role" => @role})}
     """
   end
 
   @impl true
-  def render(assigns) do
+  def render(%{role: "user"} = assigns) do
     ~H"""
-    <div class="sludge-container-primary h-full justify-between">
+    {render_chat(assigns)}
+    """
+  end
+
+  def render(%{role: "admin"} = assigns) do
+    ~H"""
+    <ul class="flex border rounded-lg *:flex-1 *:text-center items-center">
+      <li>
+        <button
+          phx-click="select-tab"
+          phx-value-tab="chat"
+          class="w-full h-full p-4 rounded-l-lg hover:bg-stone-100"
+        >
+          Chat
+        </button>
+      </li>
+      <li>
+        <button
+          phx-click="select-tab"
+          phx-value-tab="reported"
+          class="w-full h-full p-4 rounded-r-lg hover:bg-stone-100"
+        >
+          Reported
+        </button>
+      </li>
+    </ul>
+    {render_chat(assigns)}
+    {render_reported(assigns)}
+    """
+  end
+
+  def render_chat(assigns) do
+    ~H"""
+    <div
+      class={[
+        "h-full justify-between",
+        @current_tab == "chat" && "sludge-container-primary",
+        @current_tab != "chat" && "hidden"
+      ]}
+      id="sludge_chat"
+    >
       <ul
         class="w-[440px] h-[0px] overflow-y-auto flex-grow flex flex-col"
         phx-hook="ScrollDownHook"
         id="message_box"
-        phx-update="stream"
       >
         <li
           :for={msg <- @messages}
-          id={msg.id}
+          id={msg.id <> "-msg"}
           class={[
             "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative",
             msg.flagged && "bg-red-100 hover:bg-red-200"
@@ -42,7 +82,8 @@ defmodule SludgeWeb.ChatLive do
           <button
             class={[
               "absolute right-6 bottom-2 rounded-full hover:bg-stone-200 flex items-center justify-center p-2",
-              msg.flagged && "hover:bg-red-300"
+              msg.flagged && "hover:bg-red-300",
+              @role == "admin" && "hidden"
             ]}
             phx-click="flag-message"
             phx-value-message-id={msg.id}
@@ -86,8 +127,50 @@ defmodule SludgeWeb.ChatLive do
     """
   end
 
+  def render_reported(assigns) do
+    ~H"""
+    <div
+      class={[
+        "h-full justify-between",
+        @current_tab == "reported" && "sludge-container-primary",
+        @current_tab != "reported" && "hidden"
+      ]}
+      id="sludge_reported"
+    >
+      <ul class="w-[440px] overflow-y-auto flex-grow flex flex-col">
+        <li
+          :for={msg <- Enum.filter(@messages, fn m -> m.flagged end)}
+          id={msg.id <> "-reported"}
+          class={[
+            "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative"
+          ]}
+        >
+          <div class="flex gap-4 justify-between items-center">
+            <p class="text-indigo-800 text-sm text-medium dark:text-indigo-400">
+              {msg.author}
+            </p>
+            <p class="text-xs text-neutral-500">
+              {Calendar.strftime(msg.timestamp, "%d %b %Y %H:%M:%S")}
+            </p>
+          </div>
+          <p class="dark:text-neutral-400">
+            {msg.body}
+          </p>
+          <button
+            class="bg-red-600 text-white rounded-lg py-1 mt-4"
+            phx-click="delete_message"
+            phx-value-message-id={msg.id}
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket) do
       subscribe()
     end
@@ -102,7 +185,7 @@ defmodule SludgeWeb.ChatLive do
           body: "Hello, world",
           id: "Jan:Hello, world",
           timestamp: timestamp,
-          flagged: false
+          flagged: true
         },
         %{
           author: "Zbigniew",
@@ -113,6 +196,8 @@ defmodule SludgeWeb.ChatLive do
         }
       ])
       |> assign(msg_body: nil, author: nil, next_msg_id: 0)
+      |> assign(role: session["role"])
+      |> assign(current_tab: "chat")
 
     {:ok, socket}
   end
@@ -137,6 +222,31 @@ defmodule SludgeWeb.ChatLive do
     socket =
       socket
       |> assign(:messages, messages)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:delete_msg, messageId}, socket) do
+    messages =
+      socket.assigns.messages
+      |> Enum.filter(fn message -> message.id != messageId end)
+
+    socket =
+      socket
+      |> assign(:messages, messages)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("select-tab", %{"tab" => tab}, socket) do
+    socket = assign(socket, :current_tab, tab)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("delete_message", %{"message-id" => messageId}, socket) do
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:delete_msg, messageId})
 
     {:noreply, socket}
   end
