@@ -20,28 +20,38 @@ defmodule SludgeWeb.ChatLive do
 
   def render(%{role: "admin"} = assigns) do
     ~H"""
-    <ul class="flex border rounded-lg *:flex-1 *:text-center items-center">
-      <li>
-        <button
-          phx-click="select-tab"
-          phx-value-tab="chat"
-          class="w-full h-full p-4 rounded-l-lg hover:bg-stone-100"
-        >
-          Chat
-        </button>
-      </li>
-      <li>
-        <button
-          phx-click="select-tab"
-          phx-value-tab="reported"
-          class="w-full h-full p-4 rounded-r-lg hover:bg-stone-100"
-        >
-          Reported
-        </button>
-      </li>
-    </ul>
-    {render_chat(assigns)}
-    {render_reported(assigns)}
+    <div class="rounded-lg border border-indigo-200 flex flex-col h-full">
+      <ul class="flex *:flex-1 items-center border-b border-indigo-200">
+        <li>
+          <button
+            phx-click="select-tab"
+            phx-value-tab="chat"
+            class={[
+              "w-full h-full px-4 py-3 rounded-tl-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900",
+              @current_tab == "chat" &&
+                "text-white bg-indigo-800 dark:hover:bg-indigo-700"
+            ]}
+          >
+            Chat
+          </button>
+        </li>
+        <li>
+          <button
+            phx-click="select-tab"
+            phx-value-tab="reported"
+            class={[
+              "w-full h-full px-4 py-3 rounded-tr-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900",
+              @current_tab == "reported" &&
+                "text-white bg-indigo-800 dark:hover:bg-indigo-700"
+            ]}
+          >
+            Reported
+          </button>
+        </li>
+      </ul>
+      {render_chat(assigns)}
+      {render_reported(assigns)}
+    </div>
     """
   end
 
@@ -49,9 +59,11 @@ defmodule SludgeWeb.ChatLive do
     ~H"""
     <div
       class={[
-        "h-full justify-between",
-        @current_tab == "chat" && "sludge-container-primary",
-        @current_tab != "chat" && "hidden"
+        "h-full justify-between flex-col",
+        @current_tab == "chat" && "flex",
+        @current_tab != "chat" && "hidden",
+        @role == "admin" && "",
+        @role == "user" && "rounded-lg border border-indigo-200 dark:border-zinc-800"
       ]}
       id="sludge_chat"
     >
@@ -64,8 +76,10 @@ defmodule SludgeWeb.ChatLive do
           :for={msg <- @messages}
           id={msg.id <> "-msg"}
           class={[
-            "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative",
-            msg.flagged && "bg-red-100 hover:bg-red-200"
+            "flex flex-col gap-1 px-6 py-4 relative hover:bg-stone-100 dark:hover:bg-stone-800",
+            msg.flagged && @role == "user" &&
+              "bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800",
+            @role == "user" && "first:rounded-t-[7px]"
           ]}
         >
           <div class="flex gap-4 justify-between items-center">
@@ -131,8 +145,8 @@ defmodule SludgeWeb.ChatLive do
     ~H"""
     <div
       class={[
-        "h-full justify-between",
-        @current_tab == "reported" && "sludge-container-primary",
+        "h-full justify-between flex-col",
+        @current_tab == "reported" && "flex",
         @current_tab != "reported" && "hidden"
       ]}
       id="sludge_reported"
@@ -142,7 +156,8 @@ defmodule SludgeWeb.ChatLive do
           :for={msg <- Enum.filter(@messages, fn m -> m.flagged end)}
           id={msg.id <> "-reported"}
           class={[
-            "flex flex-col gap-1 px-6 py-4 hover:bg-stone-100 first:rounded-t-lg relative"
+            "flex flex-col gap-1 px-6 py-4 relative hover:bg-stone-100 dark:hover:bg-stone-800",
+            @role == "user" && "first:rounded-t-[7px]"
           ]}
         >
           <div class="flex gap-4 justify-between items-center">
