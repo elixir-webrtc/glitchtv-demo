@@ -20,14 +20,14 @@ defmodule SludgeWeb.ChatLive do
 
   def render(%{role: "admin"} = assigns) do
     ~H"""
-    <div class="rounded-lg border border-indigo-200 flex flex-col h-full">
-      <ul class="flex *:flex-1 items-center border-b border-indigo-200">
+    <div class="rounded-lg border border-indigo-200 flex flex-col h-full dark:border-zinc-800">
+      <ul class="flex *:flex-1 items-center border-b border-indigo-200 dark:border-zinc-800">
         <li>
           <button
             phx-click="select-tab"
             phx-value-tab="chat"
             class={[
-              "w-full h-full px-4 py-3 rounded-tl-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900",
+              "w-full h-full px-4 py-3 rounded-tl-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900 dark:text-white",
               @current_tab == "chat" &&
                 "text-white bg-indigo-800 dark:hover:bg-indigo-700"
             ]}
@@ -40,7 +40,7 @@ defmodule SludgeWeb.ChatLive do
             phx-click="select-tab"
             phx-value-tab="reported"
             class={[
-              "w-full h-full px-4 py-3 rounded-tr-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900",
+              "w-full h-full px-4 py-3 rounded-tr-[7px] text-center text-indigo-700 text-indigo-800 text-sm hover:text-white hover:bg-indigo-900 dark:text-white",
               @current_tab == "reported" &&
                 "text-white bg-indigo-800 dark:hover:bg-indigo-700"
             ]}
@@ -95,7 +95,7 @@ defmodule SludgeWeb.ChatLive do
           </p>
           <button
             class={[
-              "absolute right-6 bottom-2 rounded-full hover:bg-stone-200 flex items-center justify-center p-2",
+              "absolute right-6 bottom-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 flex items-center justify-center p-2",
               msg.flagged && "hover:bg-red-300",
               @role == "admin" && "hidden"
             ]}
