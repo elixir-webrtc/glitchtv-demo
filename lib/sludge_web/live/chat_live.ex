@@ -171,13 +171,22 @@ defmodule SludgeWeb.ChatLive do
           <p class="dark:text-neutral-400">
             {msg.body}
           </p>
-          <button
-            class="bg-red-600 text-white rounded-lg py-1 mt-4"
-            phx-click="delete_message"
-            phx-value-message-id={msg.id}
-          >
-            Delete
-          </button>
+          <div class="flex gap-4 items-center *:flex-1">
+            <button
+              class="bg-red-600 text-white rounded-lg py-1 mt-4"
+              phx-click="delete_message"
+              phx-value-message-id={msg.id}
+            >
+              Delete
+            </button>
+            <button
+              class="bg-gray-600 text-white rounded-lg py-1 mt-4"
+              phx-click="ignore_flag"
+              phx-value-message-id={msg.id}
+            >
+              Ignore
+            </button>
+          </div>
         </li>
       </ul>
     </div>
@@ -254,6 +263,25 @@ defmodule SludgeWeb.ChatLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info({:ignore_flag, messageId}, socket) do
+    messages =
+      socket.assigns.messages
+      |> Enum.map(fn message ->
+        if message.id == messageId do
+          Map.put(message, :flagged, false)
+        else
+          message
+        end
+      end)
+
+    socket =
+      socket
+      |> assign(:messages, messages)
+
+    {:noreply, socket}
+  end
+
   def handle_event("select-tab", %{"tab" => tab}, socket) do
     socket = assign(socket, :current_tab, tab)
 
@@ -262,6 +290,12 @@ defmodule SludgeWeb.ChatLive do
 
   def handle_event("delete_message", %{"message-id" => messageId}, socket) do
     Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:delete_msg, messageId})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("ignore_flag", %{"message-id" => messageId}, socket) do
+    Phoenix.PubSub.broadcast(Sludge.PubSub, "chatroom", {:ignore_flag, messageId})
 
     {:noreply, socket}
   end
