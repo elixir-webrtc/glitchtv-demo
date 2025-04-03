@@ -65,7 +65,9 @@ defmodule SludgeWeb.StreamerLive do
           <Publisher.live_render socket={@socket} publisher={@publisher} />
         </div>
       </div>
-      <ChatLive.live_render socket={@socket} id="livechat" />
+      <div class="w-[512px] h-full">
+        <ChatLive.live_render socket={@socket} id="livechat" />
+      </div>
     </div>
     """
   end

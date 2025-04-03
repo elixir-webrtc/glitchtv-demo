@@ -1,4 +1,4 @@
-<div class="max-h-full flex gap-4">
+<div class="max-h-full flex gap-24 lg:gap-4 flex-col lg:flex-row">
   <div class="flex flex-col gap-4 justify-stretch w-full">
     <div class="flex-grow relative min-h-[0px] max-h-fit">
       <div class="h-full *:flex *:max-h-full *:w-full *:h-full">
@@ -37,11 +37,11 @@
       </p>
     </div>
   </div>
-  <div class="flex flex-col justify-start flex-none">
+  <div class="flex flex-col justify-start flex-none pb-4">
     <ul class="flex flex-col gap-4">
       <li
         :for={recording <- @recordings}
-        class="w-[317px] pb-4 border-b border-indigo-200 last:border-0 dark:border-zinc-800"
+        class="lg:w-[317px] pb-4 border-b border-indigo-200 last:border-0 dark:border-zinc-800"
       >
         <.link href={"/recordings/#{recording.id}"} class="flex gap-4">
           <img

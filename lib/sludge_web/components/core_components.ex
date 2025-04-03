@@ -694,4 +694,17 @@ defmodule SludgeWeb.CoreComponents do
     </button>
     """
   end
+
+  attr :id, :string, required: true
+  attr :rest, :global, include: ~w(phx-hook)
+
+  def toggle(assigns) do
+    ~H"""
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" class="sr-only peer appearance-none" id={@id} {@rest} />
+      <div class="w-10 h-5 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500 peer-disabled:opacity-50">
+      </div>
+    </label>
+    """
+  end
 end
