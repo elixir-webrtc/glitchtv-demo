@@ -27,7 +27,7 @@ defmodule SludgeWeb.StreamerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex gap-4 h-full">
+    <div class="grid gap-4 grid-cols-[1fr_440px]">
       <div class="flex flex-col justify-between gap-4 flex-1">
         <div class="sludge-container-primary flex-1">
           <div class="border-b border-indigo-200 px-8 py-2 flex justify-between items-center gap-4 dark:border-zinc-800">
@@ -65,9 +65,7 @@ defmodule SludgeWeb.StreamerLive do
           <Publisher.live_render socket={@socket} publisher={@publisher} />
         </div>
       </div>
-      <div class="w-[440px] h-full flex-none *:h-full">
-        <ChatLive.live_render socket={@socket} id="livechat" />
-      </div>
+      <ChatLive.live_render socket={@socket} id="livechat" />
     </div>
     """
   end

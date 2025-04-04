@@ -33,7 +33,7 @@
 }
 
 .sludge-recordings-container {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr justify-items-center gap-4 px-4;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr justify-items-center gap-4 p-4;
 }
 
 .sludge-live-dropping-container {
