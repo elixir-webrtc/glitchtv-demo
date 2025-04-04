@@ -29,7 +29,7 @@ defmodule SludgeWeb.ChatLive do
               {Calendar.strftime(msg.timestamp, "%d %b %Y %H:%M:%S")}
             </p>
           </div>
-          <p class="dark:text-neutral-400">
+          <p class="dark:text-neutral-400 break-all">
             {msg.body}
           </p>
         </li>
@@ -39,14 +39,25 @@ defmodule SludgeWeb.ChatLive do
         phx-submit="submit-form"
         class="flex flex-col gap-2 border-t border-indigo-200 p-6 dark:border-zinc-800"
       >
-        <textarea
-          class="sludge-input-primary resize-none h-[128px] dark:text-neutral-400"
-          placeholder="Your message"
-          maxlength="500"
-          name="body"
-          value={@msg_body}
-          disabled={is_nil(@author)}
-        />
+        <div class="flex flex-col gap-1 relative">
+          <div class={
+            (String.length(@msg_body || "") == 500 &&
+               "absolute top-[-18px] right-[2px] text-xs w-full text-right text-rose-600 dark:text-rose-600") ||
+              (String.length(@msg_body || "") > 450 &&
+                 "absolute top-[-18px] right-[2px] text-xs w-full text-right text-neutral-400 dark:text-neutral-700") ||
+              "hidden"
+          }>
+            {String.length(@msg_body || "")}/500
+          </div>
+          <textarea
+            class="sludge-input-primary resize-none h-[128px] dark:text-neutral-400"
+            placeholder="Your message"
+            maxlength="500"
+            name="body"
+            value={@msg_body}
+            disabled={is_nil(@author)}
+          />
+        </div>
         <div class="flex gap-2">
           <input
             class="sludge-input-primary px-4 dark:text-neutral-400"
