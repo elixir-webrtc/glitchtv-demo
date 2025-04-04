@@ -45,11 +45,11 @@
 }
 
 .sludge-input-primary {
-    @apply rounded-lg border border-indigo-200 text-sm flex-1 dark:bg-zinc-800 dark:border-none dark:text-indigo-400;
+    @apply rounded-lg border border-indigo-200 disabled:bg-neutral-100 disabled:placeholder-neutral-300 text-sm flex-1 dark:bg-zinc-800 dark:disabled:bg-zinc-800 dark:disabled:placeholder-zinc-700 dark:border-none dark:text-red-500;
 }
 
 .sludge-button-primary {
-    @apply bg-indigo-800 text-white px-12 py-2 rounded-lg text-sm font-medium;
+    @apply bg-indigo-800 disabled:bg-indigo-500 disabled:text-indigo-300 text-white px-12 py-2 rounded-lg text-sm font-medium;
 }
 
 .sludge-button-browser-all {
