@@ -19,7 +19,7 @@ module.exports = {
         brand: "#FD4F00",
       },
       fontFamily: {
-        aeonik: ["Aeonik", "sans-serif"]
+        DMSans: ["DM Sans", "sans-serif"]
       }
     },
   },
