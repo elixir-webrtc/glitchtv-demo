@@ -696,15 +696,29 @@ defmodule SludgeWeb.CoreComponents do
   end
 
   attr :id, :string, required: true
-  attr :rest, :global, include: ~w(phx-hook)
 
-  def toggle(assigns) do
+  def theme_toggle(assigns) do
     ~H"""
-    <label class="relative inline-flex items-center cursor-pointer">
-      <input type="checkbox" class="sr-only peer appearance-none" id={@id} {@rest} />
-      <div class="w-10 h-5 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500 peer-disabled:opacity-50">
-      </div>
-    </label>
+    <div class="flex items-center">
+      <input
+        id={@id}
+        type="checkbox"
+        class="sr-only peer appearance-none"
+        phx-hook="DarkModeToggleHook"
+      />
+      <label
+        for={@id}
+        class="border border-indigo-800 p-1 border-r-0 bg-indigo-800 text-white peer-checked:bg-transparent cursor-pointer"
+      >
+        <.icon name="hero-sun" class="w-5 h-5 block" />
+      </label>
+      <label
+        for={@id}
+        class="border border-indigo-800 p-1 bg-transparent text-indigo-800 peer-checked:bg-indigo-800 peer-checked:text-white cursor-pointer"
+      >
+        <.icon name="hero-moon" class="w-5 h-5 block" />
+      </label>
+    </div>
     """
   end
 end
