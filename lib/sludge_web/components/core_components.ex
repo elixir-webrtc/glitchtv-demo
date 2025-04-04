@@ -708,15 +708,15 @@ defmodule SludgeWeb.CoreComponents do
       />
       <label
         for={@id}
-        class="border border-indigo-800 p-1 border-r-0 bg-indigo-800 text-white peer-checked:bg-transparent cursor-pointer"
+        class="border border-indigo-800 p-1 border-r-0 bg-indigo-800 text-white peer-checked:bg-transparent cursor-pointer rounded-l-lg"
       >
-        <.icon name="hero-sun" class="w-5 h-5 block" />
+        <.icon name="hero-sun" class="w-6 h-6 lg:w-5 lg:h-5 block" />
       </label>
       <label
         for={@id}
-        class="border border-indigo-800 p-1 bg-transparent text-indigo-800 peer-checked:bg-indigo-800 peer-checked:text-white cursor-pointer"
+        class="border border-indigo-800 p-1 bg-transparent text-indigo-800 peer-checked:bg-indigo-800 peer-checked:text-white cursor-pointer rounded-r-lg"
       >
-        <.icon name="hero-moon" class="w-5 h-5 block" />
+        <.icon name="hero-moon" class="w-6 h-6 lg:w-5 lg:h-5 block" />
       </label>
     </div>
     """
