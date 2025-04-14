@@ -83,7 +83,9 @@ defmodule SludgeWeb.StreamerLive do
         on_connected: &on_connected/1,
         on_disconnected: &on_disconnected/1,
         on_recording_finished: &on_recording_finished/2,
+        on_recorder_message: &on_recorder_message/2,
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}],
+        recorder_opts: [s3_upload_config: [bucket_name: "gregorsamsa-rtpx"]],
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter),
         video_codecs: @video_codecs,
         audio_codecs: @audio_codecs
@@ -140,10 +142,16 @@ defmodule SludgeWeb.StreamerLive do
   end
 
   # Gets called before on_disconnected, so everything is OK
-  defp on_recording_finished("publisher", {:ok, manifest, nil}) do
-    # XXX terrible name
+  defp on_recording_finished("publisher", {:ok, _manifest, ref}) do
     metadata = Sludge.StreamService.get_stream_metadata()
-    Sludge.RecordingsService.recording_complete(manifest, metadata)
+
+    if ref != nil do
+      Sludge.RecordingsService.upload_started(ref, metadata)
+    end
+  end
+
+  defp on_recorder_message("publisher", {:ex_webrtc_recorder, _, {:upload_complete, ref, manifest}}) do
+    Sludge.RecordingsService.upload_complete(ref, manifest)
   end
 
   @impl Phoenix.LiveView
