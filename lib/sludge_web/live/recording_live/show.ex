@@ -5,10 +5,7 @@ defmodule SludgeWeb.RecordingLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket =
-      socket
-      |> assign(:recordings, Recordings.list_five_recordings())
-
+    socket = assign(socket, :recordings, Recordings.list_five_recordings())
     {:ok, socket}
   end
 

@@ -85,7 +85,7 @@ defmodule SludgeWeb.StreamerLive do
         on_recording_finished: &on_recording_finished/2,
         on_recorder_message: &on_recorder_message/2,
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}],
-        recorder_opts: [s3_upload_config: [bucket_name: "gregorsamsa-rtpx"]],
+        recorder_opts: [s3_upload_config: [bucket_name: "glitchtv-bucket2"]],
         # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter),
         video_codecs: @video_codecs,
         audio_codecs: @audio_codecs
@@ -150,7 +150,10 @@ defmodule SludgeWeb.StreamerLive do
     end
   end
 
-  defp on_recorder_message("publisher", {:ex_webrtc_recorder, _, {:upload_complete, ref, manifest}}) do
+  defp on_recorder_message(
+         "publisher",
+         {:ex_webrtc_recorder, _, {:upload_complete, ref, manifest}}
+       ) do
     Sludge.RecordingsService.upload_complete(ref, manifest)
   end
 

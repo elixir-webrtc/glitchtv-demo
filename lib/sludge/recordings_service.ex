@@ -21,19 +21,19 @@ defmodule Sludge.RecordingsService do
 
     state = %{
       upload_tasks: %{},
-      assets_url_host: "#{s3_config[:scheme]}#{s3_config[:host]}/"
+      s3_config: s3_config
     }
 
     {:ok, state}
   end
- 
+
   @impl true
   def handle_cast({:upload_started, ref, metadata}, state) do
     state = put_in(state[:upload_tasks][ref], metadata)
 
     {:noreply, state}
   end
- 
+
   @impl true
   def handle_cast({:upload_complete, ref, manifest}, state) do
     {metadata, state} = pop_in(state[:upload_tasks][ref])
@@ -43,7 +43,7 @@ defmodule Sludge.RecordingsService do
     result_manifest =
       ExWebRTC.Recorder.Converter.convert!(manifest,
         thumbnails_ctx: %{},
-        s3_upload_config: [bucket_name: "gregorsamsa"],
+        s3_upload_config: [bucket_name: "glitchtv-bucket2"],
         only_rids: ["h", nil]
       )
       |> Map.values()
@@ -74,6 +74,13 @@ defmodule Sludge.RecordingsService do
   end
 
   defp rewrite_location(location, state) do
-    String.replace_prefix(location, "s3://", state.assets_url_host)
+    # FIXME this is workaround. Converter should return either correct url or separate parts of the url.
+    # https://stackoverflow.com/questions/7933458/how-to-format-a-url-to-get-a-file-from-amazon-s3
+    [bucket_name, file] =
+      location
+      |> String.trim_leading("s3://")
+      |> String.split("/")
+
+    "#{state.s3_config[:scheme]}#{bucket_name}.#{state.s3_config[:host]}/#{file}"
   end
 end

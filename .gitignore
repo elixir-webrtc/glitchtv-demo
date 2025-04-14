@@ -42,3 +42,4 @@ npm-debug.log
 priv/static/content/
 priv/static/fonts
 /recordings/
+/converter/
