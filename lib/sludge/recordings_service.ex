@@ -7,29 +7,44 @@ defmodule Sludge.RecordingsService do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
-  def recording_complete(manifest, metadata) do
-    GenServer.cast(__MODULE__, {:recording_complete, manifest, metadata})
+  def upload_started(ref, metadata) do
+    GenServer.cast(__MODULE__, {:upload_started, ref, metadata})
+  end
+
+  def upload_complete(ref, manifest) do
+    GenServer.cast(__MODULE__, {:upload_complete, ref, manifest})
   end
 
   @impl true
   def init(_arg) do
-    state = %{
-      assets_path: File.cwd!() |> Path.join("priv/static")
-    }
+    s3_config = Application.fetch_env!(:ex_aws, :s3)
 
-    # ExWebRTC.Recorder.controlling_process(Sludge.Recorder, self())
+    state = %{
+      upload_tasks: %{},
+      assets_url_host: "#{s3_config[:scheme]}#{s3_config[:host]}/"
+    }
 
     {:ok, state}
   end
-
+ 
   @impl true
-  def handle_cast({:recording_complete, manifest, metadata}, state) do
-    # XXX SHOULD RECORDER EXPAND PATHS?
-    # XXX MAYBE ADD OPTION PATH_PREFIX OR SOME SUCH?
+  def handle_cast({:upload_started, ref, metadata}, state) do
+    state = put_in(state[:upload_tasks][ref], metadata)
+
+    {:noreply, state}
+  end
+ 
+  @impl true
+  def handle_cast({:upload_complete, ref, manifest}, state) do
+    {metadata, state} = pop_in(state[:upload_tasks][ref])
+
+    if metadata == nil, do: raise("uh oh")
+
     result_manifest =
       ExWebRTC.Recorder.Converter.convert!(manifest,
         thumbnails_ctx: %{},
-        output_path: "./priv/static/content/"
+        s3_upload_config: [bucket_name: "gregorsamsa"],
+        only_rids: ["h", nil]
       )
       |> Map.values()
       |> List.first()
@@ -59,26 +74,6 @@ defmodule Sludge.RecordingsService do
   end
 
   defp rewrite_location(location, state) do
-    "/#{Path.relative_to(location, state.assets_path)}"
+    String.replace_prefix(location, "s3://", state.assets_url_host)
   end
-
-  # @impl true
-  # def handle_info({:ex_webrtc_recorder, _pid, {upload_result, ref, manifest}}, state) do
-  #   IO.inspect(manifest, label: :ULOAD_COMPLETE_MANIFEST)
-
-  #   # trzeba coś z tą refką zrobić
-  #   if upload_result == :upload_complete do
-  #     Sludge.Recordings.create_recording(%{
-  #       title: "#{inspect(ref)}",
-  #       description: "guwno z dupy",
-  #       link: manifest |> Map.values() |> List.first() |> Map.get(:location),
-  #       thumbnail_link: manifest |> Map.values() |> List.first() |> Map.get(:thumbnail_location),
-  #       length_seconds: 2137,
-  #       date: DateTime.utc_now(),
-  #       views_count: 0
-  #     })
-  #   end
-
-  #   {:noreply, state}
-  # end
 end
