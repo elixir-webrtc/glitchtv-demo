@@ -84,9 +84,9 @@ defmodule SludgeWeb.StreamerLive do
         on_disconnected: &on_disconnected/1,
         on_recording_finished: &on_recording_finished/2,
         on_recorder_message: &on_recorder_message/2,
+        ice_ip_filter: Application.get_env(:sludge, :ice_ip_filter, fn _ -> true end),
         ice_servers: [%{urls: "stun:stun.l.google.com:19302"}],
         recorder_opts: [s3_upload_config: [bucket_name: "glitchtv-bucket2"]],
-        # ice_ip_filter: Application.get_env(:live_broadcaster, :ice_ip_filter),
         video_codecs: @video_codecs,
         audio_codecs: @audio_codecs
       )
