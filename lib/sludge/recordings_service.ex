@@ -43,7 +43,7 @@ defmodule Sludge.RecordingsService do
     result_manifest =
       ExWebRTC.Recorder.Converter.convert!(manifest,
         thumbnails_ctx: %{},
-        s3_upload_config: [bucket_name: "glitchtv-bucket2"],
+        s3_upload_config: [bucket_name: Application.get_env(:sludge, :bucket_name)],
         only_rids: ["h", nil]
       )
       |> Map.values()

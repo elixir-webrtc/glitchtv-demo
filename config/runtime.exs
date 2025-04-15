@@ -24,6 +24,8 @@ if System.get_env("FLY_APP_NAME") do
   config :sludge, ice_ip_filter: &ExWebRTC.ICE.FlyIpFilter.ip_filter/1
 end
 
+config :sludge, bucket_name: System.get_env("BUCKET_NAME")
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
