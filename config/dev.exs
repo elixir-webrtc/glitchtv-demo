@@ -1,8 +1,8 @@
 import Config
 
 # Configure your database
-config :sludge, Sludge.Repo,
-  database: Path.expand("../sludge_dev.db", __DIR__),
+config :glitchtv, Glitchtv.Repo,
+  database: Path.expand("../glitchtv_dev.db", __DIR__),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
@@ -13,7 +13,7 @@ config :sludge, Sludge.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :sludge, SludgeWeb.Endpoint,
+config :glitchtv, GlitchtvWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
@@ -22,8 +22,8 @@ config :sludge, SludgeWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "hN+36WL5auhuie6jGcVQDdAjFvvAr/Kyk4uD6h6uSVK7nq+VL/L1o2JJ5swVhWrg",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:sludge, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:sludge, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:glitchtv, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:glitchtv, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -50,16 +50,16 @@ config :sludge, SludgeWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :sludge, SludgeWeb.Endpoint,
+config :glitchtv, GlitchtvWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"lib/sludge_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/glitchtv_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :sludge, dev_routes: true
+config :glitchtv, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

@@ -1,4 +1,4 @@
-defmodule Sludge.Repo.Migrations.CreateRecordings do
+defmodule Glitchtv.Repo.Migrations.CreateRecordings do
   use Ecto.Migration
 
   def change do

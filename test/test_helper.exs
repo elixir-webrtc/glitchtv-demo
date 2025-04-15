@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(Sludge.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(Glitchtv.Repo, :manual)

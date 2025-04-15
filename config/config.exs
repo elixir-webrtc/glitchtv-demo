@@ -7,25 +7,25 @@
 # General application configuration
 import Config
 
-config :sludge,
-  ecto_repos: [Sludge.Repo],
+config :glitchtv,
+  ecto_repos: [Glitchtv.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :sludge, SludgeWeb.Endpoint,
+config :glitchtv, GlitchtvWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: SludgeWeb.ErrorHTML, json: SludgeWeb.ErrorJSON],
+    formats: [html: GlitchtvWeb.ErrorHTML, json: GlitchtvWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Sludge.PubSub,
+  pubsub_server: Glitchtv.PubSub,
   live_view: [signing_salt: "9Ks23IJs"]
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  sludge: [
+  glitchtv: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -37,7 +37,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.3",
-  sludge: [
+  glitchtv: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
@@ -59,9 +59,9 @@ config :ex_aws,
   secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
 
 config :ex_aws, :s3,
-    scheme: "https://",
-    host: "fly.storage.tigris.dev",
-    region: "auto"
+  scheme: "https://",
+  host: "fly.storage.tigris.dev",
+  region: "auto"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

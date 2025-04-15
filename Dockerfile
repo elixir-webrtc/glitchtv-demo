@@ -91,7 +91,7 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/sludge ./
+COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/glitchtv ./
 
 # Copy Litestream binary from build stage
 COPY --from=builder /usr/bin/litestream /usr/bin/litestream

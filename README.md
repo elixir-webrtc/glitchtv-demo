@@ -1,4 +1,4 @@
-# Sludge
+# Glitch.tv - demo
 
 To start your Phoenix server:
 

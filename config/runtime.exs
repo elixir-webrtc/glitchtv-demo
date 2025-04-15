@@ -12,29 +12,29 @@ import Config
 # If you use `mix release`, you need to explicitly enable the server
 # by passing the PHX_SERVER=true when you start it:
 #
-#     PHX_SERVER=true bin/sludge start
+#     PHX_SERVER=true bin/glitchtv start
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :sludge, SludgeWeb.Endpoint, server: true
+  config :glitchtv, GlitchtvWeb.Endpoint, server: true
 end
 
 if System.get_env("FLY_APP_NAME") do
-  config :sludge, ice_ip_filter: &ExWebRTC.ICE.FlyIpFilter.ip_filter/1
+  config :glitchtv, ice_ip_filter: &ExWebRTC.ICE.FlyIpFilter.ip_filter/1
 end
 
-config :sludge, bucket_name: System.get_env("BUCKET_NAME")
+config :glitchtv, bucket_name: System.get_env("BUCKET_NAME")
 
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
       raise """
       environment variable DATABASE_PATH is missing.
-      For example: /etc/sludge/sludge.db
+      For example: /etc/glitchtv/glitchtv.db
       """
 
-  config :sludge, Sludge.Repo,
+  config :glitchtv, Glitchtv.Repo,
     database: database_path,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
@@ -53,9 +53,9 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
-  config :sludge, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+  config :glitchtv, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :sludge, SludgeWeb.Endpoint,
+  config :glitchtv, GlitchtvWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -72,7 +72,7 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :sludge, SludgeWeb.Endpoint,
+  #     config :glitchtv, GlitchtvWeb.Endpoint,
   #       https: [
   #         ...,
   #         port: 443,
@@ -94,7 +94,7 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your config/prod.exs,
   # ensuring no data is ever sent via http, always redirecting to https:
   #
-  #     config :sludge, SludgeWeb.Endpoint,
+  #     config :glitchtv, GlitchtvWeb.Endpoint,
   #       force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.

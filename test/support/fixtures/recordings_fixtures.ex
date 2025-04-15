@@ -1,7 +1,7 @@
-defmodule Sludge.RecordingsFixtures do
+defmodule Glitchtv.RecordingsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Sludge.Recordings` context.
+  entities via the `Glitchtv.Recordings` context.
   """
 
   @doc """
@@ -19,7 +19,7 @@ defmodule Sludge.RecordingsFixtures do
         title: "some title",
         views_count: 42
       })
-      |> Sludge.Recordings.create_recording()
+      |> Glitchtv.Recordings.create_recording()
 
     recording
   end

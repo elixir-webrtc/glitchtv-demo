@@ -5,7 +5,7 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Sludge.Repo.insert!(%Sludge.SomeSchema{})
+#     Glitchtv.Repo.insert!(%Glitchtv.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.

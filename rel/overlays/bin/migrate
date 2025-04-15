@@ -2,4 +2,4 @@
 set -eu
 
 cd -P -- "$(dirname -- "$0")"
-exec ./sludge eval Sludge.Release.migrate
+exec ./glitchtv eval Glitchtv.Release.migrate

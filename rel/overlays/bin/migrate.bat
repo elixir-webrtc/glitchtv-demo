@@ -1,1 +1,1 @@
-call "%~dp0\sludge" eval Sludge.Release.migrate
+call "%~dp0\glitchtv" eval Glitchtv.Release.migrate
